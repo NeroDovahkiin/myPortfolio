@@ -1,0 +1,163 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<script type="module">
+    // import Swiper JS
+    import Swiper from "./node_modules/swiper/swiper-bundle.mjs";
+    import "./node_modules/swiper/swiper.css";
+
+    var swiper = new Swiper(".product-thumb", {
+        spaceBetween: 30,
+        slidesPerView: 3,
+
+        freeMode: true,
+        watchSlidesProgress: true,
+    });
+    var swiper2 = new Swiper(".product-prev", {
+        loop: true,
+        spaceBetween: 10,
+        thumbs: {
+            swiper: swiper,
+        },
+    });
+</script>
+
+<style>
+    body {
+        background-image: url("./bground.png");
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .swiper-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-wrapper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .swiper-slide img {
+        border-radius: 10px;
+    }
+
+    .pro-detail {
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 20px;
+    }
+</style>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>asd</title>
+    </head>
+    <body>
+        <header>
+            <nav class="bg-[#111827] px-4 py-2.5 text-white lg:px-6">
+                <div
+                    class="mx-auto flex flex-wrap items-center justify-between px-5"
+                >
+                    <a
+                        class="flex items-center gap-3 hover:!text-default"
+                        href="/"
+                    >
+                        <h1 class="sr-only">fGuzzoDev</h1>
+                        <Icon name="logomark" class="size-10" />
+                        <Icon name="wordmark" class="hidden h-5 sm:block" />
+                    </a>
+
+                    <a href="/" class="flex items-center justify-center gap-1">
+                        <Icon name="mdi:arrow-left" class="size-8" />
+                        <span>Volver</span>
+                    </a>
+                </div>
+            </nav>
+        </header>
+
+        <section class="relative py-10 lg:py-24">
+            <div class="max-w-9xl mx-auto px-4 sm:px-6">
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+                    <div
+                        class="pro-detail order-last mx-auto flex w-full max-w-screen-lg flex-col max-lg:mx-auto max-lg:max-w-[608px] lg:order-none"
+                    >
+                        <h2
+                            class="font-manrope mb-2 font-bold leading-10 text-3xl"
+                        >
+                            <span
+                                ><Icon
+                                    name="mdi:code-json"
+                                    class="display: inline"
+                                /></span
+                            >
+                            asf
+                        </h2>
+                        <div
+                            class="mb-6 flex flex-col sm:flex-row sm:items-center"
+                        >
+                        </div>
+                        <p class="mb-8 font-normal sm:text-base md:text-lg">
+                           dsfsd
+                        </p>
+                    </div>
+                    <div class="">
+                        <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                            class="swiper product-prev mb-6">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1700471851.png"
+                                        alt="Yellow Travel Bag image" class="mx-auto">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1711514857.png"
+                                        alt="Yellow Travel Bag image" class="mx-auto">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1711514875.png"
+                                        alt="Yellow Travel Bag image" class="mx-auto">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1711514892.png"
+                                        alt="Yellow Travel Bag image" class="mx-auto">
+                                </div>
+                            </div>
+    
+                        </div>
+                        <div  class="swiper product-thumb max-w-[608px] mx-auto">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1700471871.png" alt="Travel Bag image"
+                                        class=" cursor-pointer border-2 border-gray-50 transition-all duration-500 hover:border-indigo-600 slide:border-indigo-600">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1711514930.png" alt="Travel Bag image"
+                                        class=" cursor-pointer border-2 border-gray-50 transition-all duration-500 hover:border-indigo-600 slide:border-indigo-600">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1700471908.png" alt="Travel Bag image"
+                                        class=" cursor-pointer border-2 border-gray-50 transition-all duration-500 hover:border-indigo-600 slide:border-indigo-600">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="https://pagedone.io/asset/uploads/1700471925.png" alt="Travel Bag image"
+                                        class=" cursor-pointer border-2 border-gray-50 transition-all duration-500 hover:border-indigo-600 slide:border-indigo-600">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
