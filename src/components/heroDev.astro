@@ -1,0 +1,62 @@
+<script type="module">
+    import { tsParticles } from "https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.0.3/+esm";
+    import { loadAll } from "https://cdn.jsdelivr.net/npm/@tsparticles/all@3.0.3/+esm";
+
+    (async () => {
+        await loadAll(tsParticles);
+
+        await tsParticles.addPreset("lightdark", {
+            fullScreen: {
+                enable: false,
+            },
+            particles: {
+                links: {
+                    enable: true,
+                },
+                move: {
+                    enable: true,
+                },
+                number: {
+                    value: 150,
+                },
+                opacity: {
+                    value: { min: 0.3, max: 1 },
+                },
+                shape: {
+                    type: ["circle"],
+                },
+            },
+        });
+
+        await tsParticles.load({
+            id: "dark",
+            options: {
+                preset: "lightdark",
+                particles: {
+                    color: {
+                       /* value: "#E0FFFF",*/
+                        value:["#aa73ff", "#f8c210", "#83d238", "#33b1f8"]
+                    },
+                    links: {
+                        color: "random",
+                    },
+                },
+            },
+        });
+    })();
+</script>
+
+<div id="dark">
+</div>
+
+<style>
+    #dark {
+        background-color: MidnightBlue;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+</style>

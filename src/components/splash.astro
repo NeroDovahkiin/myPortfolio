@@ -1,0 +1,74 @@
+---
+import { Image } from "astro:assets";
+import astronautImage from "~/assets/astronaut.png";
+import HeroDev from "~/components/heroDev.astro";
+import TypyingText from "~/components/textTyping.astro";
+
+const widths = [450, 800];
+const sizes = "(min-width: 640px) 42vw, 67vw";
+---
+
+<section class="relative h-full bg-black">
+  <div id="splash-bg-fallback" class="absolute inset-0 hidden">
+    <!--Hero image -->
+    <HeroDev />
+  </div>
+  <div class="relative grid h-full place-items-center sm:grid-cols-2">
+    <div class="w-full text-5xl sm:text-4xl md:text-5xl xl:text-7xl pl-20 sm:pl-8 md:pl-12 lg:pl-20 xl:pl-20 2xl:pl-70">
+      <h3>Bienvenid@!</h3>
+      <TypyingText />
+    </div>
+
+    <div
+      id="astronaut"
+      class="z-0  max-w-5xl self-start sm:w-10/12 sm:self-auto sm:justify-self-center"
+    >
+      <Image
+        class="h-full w-full object-cover"
+        src={astronautImage}
+        widths={widths}
+        sizes={sizes}
+        loading="eager"
+        alt="Programmer"
+      />
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <style>
+    #splash-bg-fallback {
+      display: block;
+    }
+  </style>
+</noscript>
+
+<style>
+  @keyframes float {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(0, 30px, 0);
+    }
+  }
+
+  #astronaut {
+    animation: float linear 2.5s infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #astronaut {
+      /*@apply animate-none;*/
+    }
+
+    :global(#starfield) {
+      @apply hidden;
+    }
+
+    #splash-bg-fallback {
+      @apply block;
+    }
+  }
+</style>

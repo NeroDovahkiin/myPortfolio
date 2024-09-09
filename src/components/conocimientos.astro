@@ -1,0 +1,111 @@
+---
+import CompatibilityList from "~/components/conocimientos-list.astro";
+import ContentSection from "~/components/content-section.astro";
+import type { CompatibilityItem } from "~/types";
+
+const languages: Array<CompatibilityItem> = [
+  {
+    title: "HTML",
+    icon: "languages/html",
+    url: "",
+  },
+  {
+    title: "CSS",
+    icon: "languages/css",
+    url: "",
+  },
+  {
+    title: "Javascript",
+    icon: "languages/javascript",
+    url: "",
+  },
+  {
+    title: "Java",
+    icon: "languages/java-plain",
+    url: "",
+  },
+  {
+    title: "Python",
+    icon: "languages/python",
+    url: "https://www.python.org/",
+  },
+  {
+    title: "C#",
+    icon: "languages/csharp",
+    url: "",
+  },
+  {
+    title: "React",
+    icon: "languages/react",
+    url: "https://reactjs.org/",
+  },
+  {
+    title: "MYSQL",
+    icon: "languages/mysql",
+    url: "",
+  },
+];
+
+const platforms: Array<CompatibilityItem> = [
+  {
+    title: "Astro",
+    icon: "platforms/astroplain",
+    url: "https://astro.build/",
+  },
+  {
+    title: "AWS",
+    icon: "platforms/aws",
+    url: "https://aws.amazon.com/",
+  },
+  {
+    title: "Node.js",
+    icon: "platforms/nodejs",
+    url: "https://nodejs.org/",
+  },
+  {
+    title: "Spring Boot",
+    icon: "platforms/spring",
+    url: "https://spring.io/projects/spring-boot",
+  },
+  {
+    title: "GitHub",
+    icon: "fa-brands:github",
+    url: "https://github.com/",
+  },
+  {
+    title: "Flutter",
+    icon: "platforms/flutter",
+    url: "https://flutter.dev/",
+  },
+  {
+    title: "Bootstrap",
+    icon: "platforms/bootstrap",
+    url: "https://getbootstrap.com/",
+  },
+  {
+    title: "Android",
+    icon: "platforms/android-studio",
+    url: "https://developer.android.com/",
+  },
+];
+---
+
+<ContentSection title="Conocimientos" id="conocimientos" display="display:none">
+  <Fragment slot="lead">
+    Algunos de mis conocimientos se basan en <span class="text-primary"
+      >Java</span
+    >, Spring Boot, C#, Python, <span class="text-primary">MySql</span>, bases
+    de datos, <span class="text-primary">Javascript</span>, HTML, CSS, AWS, Git,
+    etc.
+  </Fragment>
+  <CompatibilityList
+    items={languages}
+    title="Languages"
+    url="https://docs.astro.build/core-concepts/framework-components/"
+  />
+  <CompatibilityList
+    items={platforms}
+    title="Framewokrs and platforms"
+    url="https://docs.astro.build/guides/deploy/"
+  />
+</ContentSection>

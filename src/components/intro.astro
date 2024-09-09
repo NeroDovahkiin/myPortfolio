@@ -1,0 +1,24 @@
+---
+import { Icon } from "astro-icon/components";
+import ContentSection from "~/components/content-section.astro";
+---
+
+<ContentSection title="Un poco sobre mí" id="intro" display="block">
+  <Icon slot="eyebrow" name="logomark" class="size-32" />
+  <Fragment slot="about">
+    Soy egresado de la carrera
+    <span class="text-primary">Analista Programador </span> en la Universidad
+    <span class="text-primary">ORT</span> del Uruguay, y he comenzado a aportar
+    mi semilla a este vasto mundo de la programación. Si lees esto espero que tengas un
+    buen día.
+  </Fragment>
+  <div class="grid grid-cols-1">
+    <a
+      href="./FedericoGuzzo.pdf"
+      class="flex items-center justify-center gap-3 border-2 border-current px-6 py-4"
+    >
+      <Icon name="mdi:search" class="size-8" />
+      <span>Visualizar CV</span>
+    </a>
+  </div>
+</ContentSection>

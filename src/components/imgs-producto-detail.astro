@@ -1,0 +1,21 @@
+---
+import type { ImgProyectoItem } from "~/types";
+
+export interface Props {
+    items: Array<ImgProyectoItem>;
+}
+
+const { items } = Astro.props;
+---
+
+{
+    items.map((item) => (
+        <div class="swiper-slide">
+            <img
+                src={item.src}
+                alt={item.alt}
+                class="slide:border-indigo-600 cursor-pointer border-2 border-gray-50 transition-all duration-500 hover:border-indigo-600"
+            />
+        </div>
+    ))
+}

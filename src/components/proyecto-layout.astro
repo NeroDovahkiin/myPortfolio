@@ -1,0 +1,146 @@
+---
+export interface Props {
+    title: string;
+    name: string;
+    arrayImgs: Array<ImgProyectoItem>;
+    arrayLength: number;
+}
+
+const { title, name, arrayImgs, arrayLength } = Astro.props;
+import { Icon } from "astro-icon/components";
+import ImgsProductoList from "~/components/imgs-producto-list.astro";
+import ImgsProductoDetail from "~/components/imgs-producto-detail.astro";
+import type { ImgProyectoItem } from "~/types";
+---
+
+<script type="module">
+    // import Swiper JS
+    import Swiper from "./node_modules/swiper/swiper-bundle.mjs";
+    import "./node_modules/swiper/swiper.css";
+
+    const spanLargoArray = document.getElementById("largoArray");
+    const largo = spanLargoArray.dataset.description;
+
+    var swiper = new Swiper(".product-thumb", {
+        spaceBetween: 30,
+        slidesPerView: largo,
+
+        freeMode: true,
+        watchSlidesProgress: true,
+    });
+    var swiper2 = new Swiper(".product-prev", {
+        loop: true,
+        spaceBetween: 10,
+        thumbs: {
+            swiper: swiper,
+        },
+    });
+</script>
+
+<style>
+    body {
+        background-image: url("./bground.png");
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .swiper-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-wrapper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .swiper-slide img {
+        border-radius: 10px;
+    }
+
+    .pro-detail {
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 20px;
+    }
+</style>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>{title}</title>
+    </head>
+    <body>
+        <span id="largoArray" data-description={arrayLength}></span>
+        <header>
+            <nav class="bg-[#111827] px-4 py-2.5 text-white lg:px-6">
+                <div
+                    class="mx-auto flex flex-wrap items-center justify-between px-5"
+                >
+                    <a
+                        class="flex items-center gap-3 hover:!text-default"
+                        href="/"
+                    >
+                        <h1 class="sr-only">fGuzzoDev</h1>
+                        <Icon name="logomark" class="size-10" />
+                        <Icon name="wordmark" class="hidden h-5 sm:block" />
+                    </a>
+
+                    <a href="/" class="flex items-center justify-center gap-1">
+                        <Icon name="mdi:arrow-left" class="size-8" />
+                        <span>Volver</span>
+                    </a>
+                </div>
+            </nav>
+        </header>
+
+        <section class="relative py-10 lg:py-24">
+            <div class="max-w-9xl mx-auto px-4 sm:px-6">
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+                    <div
+                        class="pro-detail order-last mx-auto flex w-full max-w-screen-lg flex-col max-lg:mx-auto max-lg:max-w-[608px] lg:order-none"
+                    >
+                        <h2
+                            class="font-manrope mb-2 font-bold leading-10 text-3xl"
+                        >
+                            <span
+                                ><Icon
+                                    name="mdi:code-json"
+                                    class="display: inline"
+                                /></span
+                            >
+                            {name}
+                        </h2>
+                        <div
+                            class="mb-6 flex flex-col sm:flex-row sm:items-center"
+                        >
+                        </div>
+                        <p class="mb-8 font-normal sm:text-base md:text-lg">
+                            <slot name="descripcion" />
+                        </p>
+                    </div>
+                    <div class="swiper-container mx-auto">
+                        <div class="swiper product-prev mb-6">
+                            <div class="swiper-wrapper">
+                                <ImgsProductoList items={arrayImgs} />
+                            </div>
+                        </div>
+                        <div class="swiper product-thumb mx-auto max-w-[608px]">
+                            <div class="swiper-wrapper">
+                                <ImgsProductoDetail items={arrayImgs} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

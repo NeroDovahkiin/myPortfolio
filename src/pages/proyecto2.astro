@@ -1,0 +1,28 @@
+---
+import ContentSection from "~/components/proyecto-layout.astro";
+import type { ImgProyectoItem } from "~/types";
+
+const imagenes: Array<ImgProyectoItem> = [
+    {
+        alt: "HTML",
+        src: "/proyectos/1.png",
+    },
+    {
+        alt: "HTML",
+        src: "/proyectos/2.png",
+    },
+    {
+        alt: "HTML",
+        src: "/proyectos/3.png",
+    },
+];
+---
+
+<ContentSection
+    title="asd"
+    name="web bot"
+    arrayImgs={imagenes}
+    arrayLength={imagenes.length}
+>
+    <Fragment slot="descripcion"> asFASfsafasfASGASG </Fragment>
+</ContentSection>

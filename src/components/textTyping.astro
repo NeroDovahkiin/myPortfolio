@@ -1,0 +1,281 @@
+
+  <div class="input-wrapper">
+    <div style="white-space: nowrap;margin-right: 18px">I'm a</div>
+    <span class="placeholder"></span>
+  </div>
+
+<style>
+  @charset "UTF-8";
+  .input-wrapper {
+    display: flex;
+
+  }
+  .input-wrapper > input,
+  .input-wrapper > .placeholder {
+    color: #4070f4;
+    display: block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+  }
+  .input-wrapper > .placeholder {
+    pointer-events: none;
+  }
+  .input-wrapper > .placeholder::before {
+    content: "​";
+    content: "​"/"Developer";
+    alt: "Developer";
+    white-space: break-spaces;
+    will-change: content;
+    -webkit-animation: typed-0 3.08s linear 1s infinite forwards;
+    animation: typed-0 3.08s linear 1s infinite forwards;
+  }
+  .input-wrapper > .placeholder::after {
+    content: "​";
+    position: relative;
+    display: inline-block;
+    padding-right: 5px;
+    border-right: 5px solid lightgrey;
+    white-space: nowrap;
+    -webkit-animation: typed-0-caret 0.75s linear 1s infinite forwards;
+    animation: typed-0-caret 0.75s linear 1s infinite forwards;
+  }
+  @-webkit-keyframes typed-0 {
+    0%,
+    2.1635021645% {
+      content: "​D";
+      content: "​D"/"Developer";
+      alt: "Developer";
+    }
+    2.1645021645%,
+    4.328004329% {
+      content: "​De";
+      content: "​De"/"Developer";
+      alt: "Developer";
+    }
+    4.329004329%,
+    6.4925064935% {
+      content: "​Dev";
+      content: "​Dev"/"Developer";
+      alt: "Developer";
+    }
+    6.4935064935%,
+    8.657008658% {
+      content: "​Deve";
+      content: "​Deve"/"Developer";
+      alt: "Developer";
+    }
+    8.658008658%,
+    10.8215108225% {
+      content: "​Devel";
+      content: "​Devel"/"Developer";
+      alt: "Developer";
+    }
+    10.8225108225%,
+    12.986012987% {
+      content: "​Develo";
+      content: "​Develo"/"Developer";
+      alt: "Developer";
+    }
+    12.987012987%,
+    15.1505151515% {
+      content: "​Develop";
+      content: "​Develop"/"Developer";
+      alt: "Developer";
+    }
+    15.1515151515%,
+    17.315017316% {
+      content: "​Develope";
+      content: "​Develope"/"Developer";
+      alt: "Developer";
+    }
+    17.316017316%,
+    64.5011645022% {
+      content: "​Developer";
+      content: "​Developer"/"Developer";
+      alt: "Developer";
+    }
+    64.5021645022%,
+    66.2327662338% {
+      content: "​Develope";
+      content: "​Develope"/"Developer";
+      alt: "Developer";
+    }
+    66.2337662338%,
+    67.9643679654% {
+      content: "​Develop";
+      content: "​Develop"/"Developer";
+      alt: "Developer";
+    }
+    67.9653679654%,
+    69.695969697% {
+      content: "​Develo";
+      content: "​Develo"/"Developer";
+      alt: "Developer";
+    }
+    69.696969697%,
+    71.4275714286% {
+      content: "​Devel";
+      content: "​Devel"/"Developer";
+      alt: "Developer";
+    }
+    71.4285714286%,
+    73.1591731602% {
+      content: "​Deve";
+      content: "​Deve"/"Developer";
+      alt: "Developer";
+    }
+    73.1601731602%,
+    74.8907748918% {
+      content: "​Dev";
+      content: "​Dev"/"Developer";
+      alt: "Developer";
+    }
+    74.8917748918%,
+    76.6223766234% {
+      content: "​De";
+      content: "​De"/"Developer";
+      alt: "Developer";
+    }
+    76.6233766234%,
+    78.353978355% {
+      content: "​D";
+      content: "​D"/"Developer";
+      alt: "Developer";
+    }
+    78.354978355%,
+    100% {
+      content: "​";
+      content: "​"/"Developer";
+      alt: "Developer";
+    }
+  }
+  @keyframes typed-0 {
+    0%,
+    2.1635021645% {
+      content: "​D";
+      content: "​D"/"Developer";
+      alt: "Developer";
+    }
+    2.1645021645%,
+    4.328004329% {
+      content: "​De";
+      content: "​De"/"Developer";
+      alt: "Developer";
+    }
+    4.329004329%,
+    6.4925064935% {
+      content: "​Dev";
+      content: "​Dev"/"Developer";
+      alt: "Developer";
+    }
+    6.4935064935%,
+    8.657008658% {
+      content: "​Deve";
+      content: "​Deve"/"Developer";
+      alt: "Developer";
+    }
+    8.658008658%,
+    10.8215108225% {
+      content: "​Devel";
+      content: "​Devel"/"Developer";
+      alt: "Developer";
+    }
+    10.8225108225%,
+    12.986012987% {
+      content: "​Develo";
+      content: "​Develo"/"Developer";
+      alt: "Developer";
+    }
+    12.987012987%,
+    15.1505151515% {
+      content: "​Develop";
+      content: "​Develop"/"Developer";
+      alt: "Developer";
+    }
+    15.1515151515%,
+    17.315017316% {
+      content: "​Develope";
+      content: "​Develope"/"Developer";
+      alt: "Developer";
+    }
+    17.316017316%,
+    64.5011645022% {
+      content: "​Developer";
+      content: "​Developer"/"Developer";
+      alt: "Developer";
+    }
+    64.5021645022%,
+    66.2327662338% {
+      content: "​Develope";
+      content: "​Develope"/"Developer";
+      alt: "Developer";
+    }
+    66.2337662338%,
+    67.9643679654% {
+      content: "​Develop";
+      content: "​Develop"/"Developer";
+      alt: "Developer";
+    }
+    67.9653679654%,
+    69.695969697% {
+      content: "​Develo";
+      content: "​Develo"/"Developer";
+      alt: "Developer";
+    }
+    69.696969697%,
+    71.4275714286% {
+      content: "​Devel";
+      content: "​Devel"/"Developer";
+      alt: "Developer";
+    }
+    71.4285714286%,
+    73.1591731602% {
+      content: "​Deve";
+      content: "​Deve"/"Developer";
+      alt: "Developer";
+    }
+    73.1601731602%,
+    74.8907748918% {
+      content: "​Dev";
+      content: "​Dev"/"Developer";
+      alt: "Developer";
+    }
+    74.8917748918%,
+    76.6223766234% {
+      content: "​De";
+      content: "​De"/"Developer";
+      alt: "Developer";
+    }
+    76.6233766234%,
+    78.353978355% {
+      content: "​D";
+      content: "​D"/"Developer";
+      alt: "Developer";
+    }
+    78.354978355%,
+    100% {
+      content: "​";
+      content: "​"/"Developer";
+      alt: "Developer";
+    }
+  }
+  @-webkit-keyframes typed-0-caret {
+    75% {
+      border-color: transparent;
+    }
+  }
+  @keyframes typed-0-caret {
+    75% {
+      border-color: transparent;
+    }
+  }
+  .input-wrapper > input:focus + .placeholder,
+  .input-wrapper > input:active + .placeholder {
+    display: none;
+  }
+</style>
