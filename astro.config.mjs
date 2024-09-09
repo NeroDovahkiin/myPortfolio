@@ -5,7 +5,8 @@ import { defineConfig } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
  
-  site: "http://localhost:4321",
+  site: 'https://nerodovahkiin.github.io',
+  base: 'myPortfolio',
   output: 'server',
   integrations: [tailwind(), icon()],
 });
