@@ -6,7 +6,7 @@ import vercel from '@astrojs/vercel/serverless';
 // https://astro.build/config
 export default defineConfig({
  
-  site: 'https://localhost:4321',
+  site: 'https://nerodovahkiin.github.io',
   base: '',
   output: 'server',
   adapter: vercel(),
