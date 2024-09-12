@@ -1,0 +1,7 @@
+{
+    "editor.defaultFormatter": "vscode.emmet",
+    "editor.formatOnSaveMode": "modifications",
+    "[astro]": {
+        "editor.defaultFormatter": "astro-build.astro-vscode"
+    }
+}
