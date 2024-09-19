@@ -14,11 +14,18 @@ import ContentSection from "~/components/content-section.astro";
   </Fragment>
   <div class="grid grid-cols-1">
     <a
-      href="./FedericoGuzzo.pdf"
-      class="flex items-center justify-center gap-3 border-2 border-current px-6 py-4"
+      href="#contacto"
+      class="flex items-center justify-center gap-3 border-2 border-current px-6 py-4" onclick="solicitarCV()"
     >
       <Icon name="mdi:search" class="size-8" />
-      <span>Visualizar CV</span>
+      <span>solicitar CV</span>
     </a>
   </div>
 </ContentSection>
+
+<script is:client>
+  function solicitarCV(){
+    document.querySelectorAll(".itemForm")[2].value = "Hola Federico! me gustaría solicitar tu curriculum para...";
+    document.querySelectorAll(".itemForm")[2].focus();
+  }
+</script>
