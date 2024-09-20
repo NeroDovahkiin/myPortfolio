@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 import { Image } from "astro:assets";
 import astronautImage from "~/assets/astronaut.png";
 import HeroDev from "~/components/heroDev.astro";
@@ -11,17 +12,30 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
 <section class="relative h-full bg-black">
   <div id="splash-bg-fallback" class="absolute inset-0">
     <!--Hero image -->
-    <HeroDev/>
+    <HeroDev />
   </div>
   <div class="relative grid h-full place-items-center sm:grid-cols-2">
-    <div class="w-full text-5xl sm:text-4xl md:text-5xl xl:text-7xl pl-20 sm:pl-8 md:pl-12 lg:pl-20 xl:pl-20 2xl:pl-70">
-      <h3 class="text-white">Bienvenid@!</h3>
-      <TypyingText />
+    <div class="w-full text-5xl sm:text-4xl md:text-5xl xl:text-7xl bg-blur sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none" >
+      <div class="pl-20 sm:pl-8 md:pl-8 lg:pl-20  2xl:pl-70 pt-10">
+        <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
+        <h2 class="whitespace-nowrap text-white">
+          <span class="text-cyan-400">me llamo</span> Federico
+        </h2>
+        <TypyingText />
+      </div>
+      <div class="w-full">
+        <div class="flex justify-center py-10 m-auto gap-3 sm:justify-start sm:pl-8 md:pl-12 lg:pl-20  2xl:pl-70">
+          <a href="https://codepen.io/NeroDovahkiin" class="headIcon"><Icon name="mdi:codepen" class="size-10" /></a>
+          <a href="https://www.linkedin.com/in/federicogmenezes/" class="headIcon"><Icon name="mdi:linkedin" class="size-10" /></a>
+          <a href="https://www.instagram.com/nero_fgm/" class="headIcon"><Icon name="mdi:instagram" class="size-10" /></a>
+          <a href="https://github.com/NeroDovahkiin" class="headIcon"><Icon name="mdi:github" class="size-10" /></a>
+        </div>
+      </div>
     </div>
 
     <div
       id="astronaut"
-      class="z-0  max-w-5xl self-start sm:w-10/12 sm:self-auto sm:justify-self-center"
+      class="z-0 max-w-5xl self-start sm:w-10/12 sm:self-auto sm:justify-self-center"
     >
       <Image
         class="h-full w-full object-cover"
@@ -70,5 +84,11 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
     #splash-bg-fallback {
       @apply block;
     }
+  }
+
+  .headIcon{
+    background-color: darkslategrey;
+    padding: 5px;
+    border-radius: 10px;
   }
 </style>

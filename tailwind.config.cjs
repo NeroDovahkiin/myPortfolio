@@ -18,10 +18,11 @@ module.exports = {
       backgroundColor: {
         default: "var(--color-background)",
         offset: "var(--color-background-offset)",
+        blur: "rgba(0, 0, 0, 0.1)"
       },
       borderColor: {
         default: "var(--color-border)",
-      },
+      }
     },
   },
   corePlugins: {
