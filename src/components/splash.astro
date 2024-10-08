@@ -23,12 +23,12 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
         </h2>
         <TypyingText />
       </div>
-      <div class="w-full">
+      <div class="w-full headerLinks">
         <div class="flex justify-center py-10 m-auto gap-3 sm:justify-start sm:pl-8 md:pl-12 lg:pl-20  2xl:pl-70">
-          <a href="https://codepen.io/NeroDovahkiin" class="headIcon"><Icon name="mdi:codepen" class="size-10 text-white" /></a>
-          <a href="https://www.linkedin.com/in/federicogmenezes/" class="headIcon"><Icon name="mdi:linkedin" class="size-10 text-white" /></a>
-          <a href="https://www.instagram.com/nero_fgm/" class="headIcon"><Icon name="mdi:instagram" class="size-10 text-white" /></a>
-          <a href="https://github.com/NeroDovahkiin" class="headIcon"><Icon name="mdi:github" class="size-10 text-white" /></a>
+          <a href="https://codepen.io/NeroDovahkiin" class="headIcon" aria-label="codepen"><Icon name="mdi:codepen" class="size-10 text-white" /></a>
+          <a href="https://www.linkedin.com/in/federicogmenezes/" class="headIcon" aria-label="linkedin"><Icon name="mdi:linkedin" class="size-10 text-white" /></a>
+          <a href="https://www.instagram.com/nero_fgm/" class="headIcon" aria-label="instagram"><Icon name="mdi:instagram" class="size-10 text-white" /></a>
+          <a href="https://github.com/NeroDovahkiin" class="headIcon" aria-label="github"><Icon name="mdi:github" class="size-10 text-white" /></a>
         </div>
       </div>
     </div>
@@ -54,10 +54,18 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
     #splash-bg-fallback {
       display: block;
     }
+    
+   
   </style>
 </noscript>
 
 <style>
+    /* Oculta el div cuando la altura del viewport es menor a 350px */
+    @media (max-height: 350px) {
+            .headerLinks {
+                display: none;
+            }
+        }
   @keyframes float {
     0% {
       transform: translate3d(0, 0, 0);

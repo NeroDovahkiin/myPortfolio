@@ -1,0 +1,249 @@
+---
+import { Icon } from "astro-icon/components";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+---
+
+<style>
+    body {
+        background-image: url("/bground.png");
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    #container {
+        width: 100%;
+        height: 80vh;
+    }
+
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .swiper {
+        width: 100%;
+        height: 300px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 10px;
+    }
+
+    .swiper-slide {
+        background-size: cover;
+        background-position: center;
+    }
+
+    .mySwiper2 {
+        height: 80%;
+        width: 100%;
+    }
+
+    .mySwiper {
+        height: 20%;
+        box-sizing: border-box;
+        padding: 10px 0;
+    }
+
+    .mySwiper .swiper-slide {
+        width: 25%;
+        height: 100%;
+        opacity: 0.4;
+    }
+
+    .mySwiper .swiper-slide-thumb-active {
+        opacity: 1;
+    }
+
+    .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background-color: black;
+    }
+
+    .pro-detail {
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+    }
+</style>
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CARUP DESPACHO</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    </head>
+
+    <body>
+        <header>
+            <nav class="bg-[#111827] px-4 py-2.5 text-white lg:px-6">
+                <div
+                    class="mx-auto flex flex-wrap items-center justify-between px-5"
+                >
+                    <a
+                        class="flex items-center gap-3 hover:!text-default"
+                        href="/"
+                    >
+                        <h1 class="sr-only">fGuzzoDev</h1>
+                        <Icon name="logomark" class="size-10" />
+                        <Icon name="wordmark" class="hidden h-5 sm:block" />
+                    </a>
+
+                    <a href="/" class="flex items-center justify-center gap-1">
+                        <Icon name="mdi:arrow-left" class="size-8" />
+                        <span>Volver</span>
+                    </a>
+                </div>
+            </nav>
+        </header>
+
+        <section class="py-10 lg:py-24">
+            <div class="max-w-9xl mx-auto px-4 sm:px-6">
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    <div
+                        class="pro-detail mx-auto flex w-full max-w-screen-lg flex-col max-lg:mx-auto"
+                    >
+                        <h2
+                            class="font-manrope mb-2 font-bold leading-10 text-3xl"
+                        >
+                            <span
+                                ><Icon
+                                    name="mdi:code-json"
+                                    class="display: inline"
+                                /></span
+                            >
+                            Diseñador de carteles
+                        </h2>
+                        <div
+                            class="mb-6 flex flex-col sm:flex-row sm:items-center"
+                        >
+                        </div>
+                        <p class="mb-8 font-normal sm:text-base md:text-lg">
+                            Un experimento para desarrollar un creador de cartelería personalizado para integrarlo a proyectos de e-commerce o tiendas online
+                        </p>
+                        <hr />
+                        <div
+                            class="mt-10 flex flex-col items-center gap-10 text-center"
+                        >
+                            <div>
+                                <h1 class="font-bold text-xl my-3">Tecnologías</h1>
+                                <p>
+                                    <span
+                                        class="me-2 rounded bg-gray-100 px-2.5 py-0.5 font-medium text-gray-800 text-xs dark:bg-gray-700 dark:text-gray-300"
+                                        >HTML</span
+                                    >
+                                    <span
+                                        class="me-2 rounded bg-gray-100 px-2.5 py-0.5 font-medium text-gray-800 text-xs dark:bg-gray-700 dark:text-gray-300"
+                                        >Javascript</span
+                                    >
+                                    <span
+                                        class="me-2 rounded bg-gray-100 px-2.5 py-0.5 font-medium text-gray-800 text-xs dark:bg-gray-700 dark:text-gray-300"
+                                        >CSS</span
+                                    >                                    
+                                </p>
+                            </div>
+                            <div>
+                                <a
+                                    href="https://nerodovahkiin.github.io/pj/"
+                                    class="inline-flex items-center justify-center rounded-lg bg-gray-50 p-2 px-4 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                >
+                                    <span class="w-full">Probar</span>
+                                    <svg
+                                        class="ms-2 h-4 w-4 rtl:rotate-180"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 14 10"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M1 5h12m0 0L9 1m4 4L9 9"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="container">
+                        <div
+                            style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                            class="swiper mySwiper2"
+                        >
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <img src="/proyectos/cartel/cartel.png" />
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="/proyectos/cartel/cartel1.png" />
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="/proyectos/cartel/cartel3.png" />
+                                </div>
+                            </div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                        <div class="swiper mySwiper">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <img src="/proyectos/cartel/cartel.png" />
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="/proyectos/cartel/cartel1.png" />
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="/proyectos/cartel/cartel3.png" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
+<!-- 
+<script
+    src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>-->
+<script type="module">
+    import Swiper from "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs";
+    var swiper = new Swiper(".mySwiper", {
+        loop: true,
+        spaceBetween:20,
+        slidesPerView: 3,
+        freeMode: true,
+        watchSlidesProgress: true,
+    });
+    var swiper2 = new Swiper(".mySwiper2", {
+        loop: true,
+        spaceBetween: 10,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        thumbs: {
+            swiper: swiper,
+        },
+    });
+</script>
