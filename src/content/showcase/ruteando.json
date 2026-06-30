@@ -1,0 +1,24 @@
+{
+  "title": "Ruteando",
+  "url": "ruteando",
+  "image": "/proyectos/ruteando/logo.webp",
+  "section": "vibecoding",
+  "featured": 1,
+  "technologies": [
+    "Node",
+    "Tailwind",
+    "Supabase",
+    "Vanilla JS"
+  ],
+  "images": [
+    "/proyectos/ruteando/login.webp",
+    "/proyectos/ruteando/combustible-divisas.webp",
+    "/proyectos/ruteando/dias.webp",
+    "/proyectos/ruteando/home.webp",
+    "/proyectos/ruteando/lug.webp",
+    "/proyectos/ruteando/map.webp"
+  ],
+  "demoUrl": "https://ruteando-production-c4fc.up.railway.app/login",
+  "demoLabel": "Acceder",
+  "thumbsCount": 6
+}

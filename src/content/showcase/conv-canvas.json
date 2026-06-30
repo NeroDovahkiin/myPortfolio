@@ -1,0 +1,20 @@
+{
+  "title": "Filtros Canvas",
+  "image": "/proyectos/ccanvas/ccanvas.webp",
+  "url": "conv-canvas",
+  "section": "conceptos",
+  "description": [
+    "Aplicando filtros y convoluciones sobre imágenes utilizando vanilla JS y la API de Canvas, realizando operaciones sobre los canales RGBA.",
+    "Este proyecto lo realicé para entender un poco sobre las redes neuronales convolucionales (CNN) y la aplicación de operaciones de convolución utilizando Kernels sobre la matriz de píxeles de una imagen. Los kernels utilizados son matrices de 3x3.",
+    "Las operaciones de convolución se aplican primero sobre todos los canales por igual, resultando en imágenes en escala de grises, y luego sobre cada canal RGBA obteniendo un resultado a color."
+  ],
+  "technologies": ["HTML", "Javascript", "CSS"],
+  "images": [
+    "/proyectos/ccanvas/ccanvas.webp",
+    "/proyectos/ccanvas/ccanvas1.webp",
+    "/proyectos/ccanvas/ccanvas2.webp"
+  ],
+  "demoUrl": "https://nerodovahkiin.github.io/convolutionCanvas/",
+  "demoLabel": "Probar",
+  "thumbsCount": 3
+}

@@ -1,0 +1,19 @@
+{
+  "title": "Task Manager",
+  "image": "/proyectos/task1-min.webp",
+  "url": "task-manager",
+  "featured": 4,
+  "section": "proyectos",
+  "description": [
+    "Administrador de tareas simple y accesible, surgido de la necesidad de guardar notas rápidas y llevar seguimiento de pendientes. Construido enteramente en vanilla JS, usa el Local Storage del navegador para persistir las tareas entre sesiones."
+  ],
+  "technologies": ["HTML", "Javascript", "CSS"],
+  "images": [
+    "/proyectos/task1-min.webp",
+    "/proyectos/task2.webp",
+    "/proyectos/task3.webp"
+  ],
+  "demoUrl": "https://nerodovahkiin.github.io/taskApp/",
+  "demoLabel": "Ver una demo",
+  "thumbsCount": 3
+}

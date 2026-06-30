@@ -1,0 +1,12 @@
+{
+  "items": [
+    { "title": "HTML",       "icon": "languages/html",        "url": "#" },
+    { "title": "CSS",        "icon": "languages/css",         "url": "#" },
+    { "title": "Javascript", "icon": "languages/javascript",  "url": "#" },
+    { "title": "Java",       "icon": "languages/java-plain",  "url": "#" },
+    { "title": "Python",     "icon": "languages/python",      "url": "https://www.python.org/" },
+    { "title": "C#",         "icon": "languages/csharp",      "url": "#" },
+    { "title": "React",      "icon": "languages/react",       "url": "https://reactjs.org/" },
+    { "title": "MYSQL",      "icon": "languages/mysql",       "url": "#" }
+  ]
+}

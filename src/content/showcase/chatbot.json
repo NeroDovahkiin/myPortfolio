@@ -1,0 +1,19 @@
+{
+  "title": "ChatBot WhatsApp",
+  "image": "/proyectos/chatbot/logoBot.webp",
+  "url": "chatbot",
+  "featured": 5,
+  "section": "proyectos",
+  "description": [
+    "Bot de WhatsApp con respuestas automáticas, menús interactivos, envío de imágenes y otras funcionalidades, integrado con la API de WhatsApp Business."
+  ],
+  "technologies": ["Javascript", "Node", "HTML", "CSS"],
+  "images": [
+    "/proyectos/chatbot/logoBot.webp",
+    "/proyectos/chatbot/chatb1.webp",
+    "/proyectos/chatbot/chatb2.webp"
+  ],
+  "demoUrl": "/#contacto",
+  "demoLabel": "Solicitar una demo",
+  "thumbsCount": 3
+}

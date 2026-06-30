@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del \"src\\\\pages\\\\carup.astro\" \"src\\\\pages\\\\chatbot.astro\" \"src\\\\pages\\\\task-manager.astro\" \"src\\\\pages\\\\xml-converter.astro\" \"src\\\\pages\\\\conv-canvas.astro\" \"src\\\\pages\\\\3d-dial.astro\" \"src\\\\pages\\\\cartel-design.astro\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\NERO\\\\Desktop\\\\myPortfolio-master\\\\src\\\\content\\\\skills\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\NERO\\\\Desktop\\\\myPortfolio-master\\\\src\\\\content\\\\timeline\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\NERO\\\\Desktop\\\\myPortfolio-master\\\\src\\\\lib\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\NERO\\\\Desktop\\\\myPortfolio-master\\\\src\\\\pages\\\\admin\\\\editar\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\NERO\\\\Desktop\\\\myPortfolio-master\\\\src\\\\pages\\\\api\\\\admin\")"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Oddin Track",
+  "url": "oddin-track",
+  "image": "/proyectos/oddin-track/ot-logo.webp",
+  "section": "vibecoding",
+  "featured": 2,
+  "technologies": [
+    "Node",
+    "Tailwind",
+    "Supabase",
+    "Vanilla JS"
+  ],
+  "demoUrl": "https://oddin-track-production.up.railway.app/",
+  "demoLabel": "Acceder"
+}

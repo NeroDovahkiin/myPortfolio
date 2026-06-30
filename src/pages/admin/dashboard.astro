@@ -1,0 +1,119 @@
+---
+export const prerender = false;
+import { readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+const SHOWCASE_DIR = join(process.cwd(), "src", "content", "showcase");
+
+const files = (await readdir(SHOWCASE_DIR)).filter((f) => f.endsWith(".json"));
+
+const projects = await Promise.all(
+  files.map(async (file) => {
+    const slug = file.replace(".json", "");
+    const raw = await readFile(join(SHOWCASE_DIR, file), "utf-8");
+    const data = JSON.parse(raw);
+    return { slug, ...data };
+  })
+);
+
+const sections = {
+  proyectos: projects.filter((p) => p.section === "proyectos").sort((a, b) => (a.featured ?? 99) - (b.featured ?? 99)),
+  conceptos: projects.filter((p) => p.section === "conceptos"),
+  vibecoding: projects.filter((p) => p.section === "vibecoding"),
+  otros: projects.filter((p) => !p.section),
+};
+
+const sectionLabels: Record<string, string> = {
+  proyectos: "Proyectos",
+  conceptos: "Prueba de conceptos",
+  vibecoding: "Vibecoding",
+  otros: "Sin sección",
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-gray-950 text-white">
+
+    <nav class="border-b border-gray-800 bg-gray-900 px-6 py-3 flex items-center justify-between">
+      <span class="font-bold text-lg">fGuzzoDev <span class="text-indigo-400 text-sm font-normal">admin</span></span>
+      <div class="flex items-center gap-4">
+        <a href="/" target="_blank" class="text-gray-400 hover:text-white text-sm transition-colors">Ver sitio →</a>
+        <a href="/api/admin/logout" class="text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg transition-colors">Salir</a>
+      </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 py-8">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-2xl font-bold">Proyectos</h1>
+        <a href="/admin/nuevo" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+          + Nuevo proyecto
+        </a>
+      </div>
+
+      {Object.entries(sections).map(([key, items]) => items.length > 0 && (
+        <section class="mb-10">
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{sectionLabels[key]}</h2>
+          <div class="rounded-xl border border-gray-800 overflow-hidden">
+            {items.map((p, i) => (
+              <div class={`flex items-center gap-4 px-4 py-3 ${i !== 0 ? "border-t border-gray-800" : ""} hover:bg-gray-900/50 transition-colors`}>
+                <img src={p.image} alt={p.title} class="w-16 h-10 object-cover rounded-md bg-gray-800 flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium text-sm truncate">{p.title}</p>
+                  <p class="text-xs text-gray-500 truncate">/{p.url} · {p.slug}.json</p>
+                </div>
+                {p.featured && <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full flex-shrink-0">#{p.featured}</span>}
+                {p.specialPage && <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-0.5 rounded-full flex-shrink-0">especial</span>}
+                <div class="flex gap-2 flex-shrink-0">
+                  <a href={`/admin/editar/${p.slug}`} class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors">Editar</a>
+                  <button
+                    data-slug={p.slug}
+                    data-title={p.title}
+                    onclick="eliminar(this)"
+                    class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-400 px-3 py-1.5 rounded-lg transition-colors"
+                  >Eliminar</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {projects.length === 0 && (
+        <div class="text-center text-gray-500 py-16">No hay proyectos todavía.</div>
+      )}
+    </main>
+
+    <div id="toast" class="fixed bottom-6 right-6 bg-green-600 text-white text-sm px-4 py-3 rounded-xl shadow-xl hidden">
+      ✓ <span id="toast-msg"></span>
+    </div>
+
+    <script>
+      window.eliminar = async function(btn) {
+        const slug = btn.dataset.slug;
+        const title = btn.dataset.title;
+        if (!confirm(`¿Eliminar "${title}"?`)) return;
+        const res = await fetch(`/api/admin/proyectos?slug=${slug}`, { method: "DELETE" });
+        if (res.ok) {
+          btn.closest(".flex.items-center").remove();
+          showToast("Proyecto eliminado");
+        } else {
+          alert("Error al eliminar");
+        }
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        document.getElementById("toast-msg").textContent = msg;
+        t.classList.remove("hidden");
+        setTimeout(() => t.classList.add("hidden"), 2500);
+      }
+    </script>
+  </body>
+</html>

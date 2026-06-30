@@ -1,0 +1,13 @@
+{
+  "title": "CARUP MOBILE",
+  "image": "/proyectos/carupapkpreview.webp",
+  "url": "carup-app",
+  "featured": 2,
+  "section": "proyectos",
+  "specialPage": true,
+  "description": [
+    "App móvil para Android destinada a los choferes y prestadores de servicio, permite recibir y gestionar servicios en tiempo real.",
+    "Desarrollada con Flutter, se comunica con la API REST de CARUP DESPACHO vía Spring Boot."
+  ],
+  "technologies": ["Flutter", "Android", "Spring Boot", "Java", "MySQL"]
+}

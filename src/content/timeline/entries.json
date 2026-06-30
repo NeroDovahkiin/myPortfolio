@@ -1,0 +1,34 @@
+{
+  "entries": [
+    {
+      "title": "Digital House – Backend Developer | Introducción a la IA",
+      "subtitle": "En curso",
+      "period": "Actualidad"
+    },
+    {
+      "title": "Analista Programador – Universidad ORT del Uruguay",
+      "subtitle": "Desarrollador web y AP",
+      "period": "2020-2024"
+    },
+    {
+      "title": "Diploma Operador PC – CETP UTU",
+      "subtitle": "Manejo de herramientas, Excel, Word, y PowerPoint",
+      "period": "2016"
+    },
+    {
+      "title": "3° Bachillerato Profesional Instalaciones eléctricas",
+      "subtitle": "Habilitación hasta 120 kilowatts",
+      "period": "2015"
+    },
+    {
+      "title": "EMP Electrotecnia/Instalaciones eléctricas",
+      "subtitle": "Escuela Técnica Artigas (UTU)",
+      "period": "2012-2014"
+    },
+    {
+      "title": "Bachillerato – Liceo N°1 Deptal. de Artigas",
+      "subtitle": "5to año orientación científica · 6to año orientación Ingeniería",
+      "period": "2009-2011"
+    }
+  ]
+}

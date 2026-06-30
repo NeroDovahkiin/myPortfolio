@@ -1,0 +1,18 @@
+{
+  "title": "3D Dials",
+  "image": "/proyectos/3ddial/3ddial.webp",
+  "url": "3d-dial",
+  "section": "conceptos",
+  "description": [
+    "Experimento con Three.js para representaciones 3D en el navegador. La idea es un repositorio de accesos directos a webs, pero en 3D.",
+    "Doble clic en una caja para acceder a la web destino, Ctrl+clic para abrir en nueva pestaña. En móvil, doble tap. Clic y arrastrar para rotar la vista, rueda del mouse para zoom."
+  ],
+  "technologies": ["HTML", "Javascript", "CSS"],
+  "images": [
+    "/proyectos/3ddial/3ddial.webp",
+    "/proyectos/3ddial/3ddial2.webp"
+  ],
+  "demoUrl": "https://nerodovahkiin.github.io/3DSpeedDial/",
+  "demoLabel": "Probar",
+  "thumbsCount": 2
+}

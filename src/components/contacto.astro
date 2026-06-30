@@ -1,0 +1,199 @@
+---
+import ContentSection from "~/components/content-section.astro";
+import { Icon } from "astro-icon/components";
+import { SITE } from "~/config";
+---
+
+
+<script is:client src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script is:client>
+
+ 
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const form = document.querySelector('form');
+    // evento solo numeros en campo telefono
+    document.querySelectorAll(".itemForm")[1].addEventListener("input",(event)=>{
+    event.target.value = event.target.value.replace(/\D/g, '');
+  });
+
+    if (form) {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        checkInputs();
+
+        if(!checkInputs()){
+          console.log("datos incompletos")
+        } else{
+        
+
+          // inicio del envio
+  
+      const body = {
+        mail: document.querySelectorAll(".itemForm")[0].value,
+        email: document.querySelectorAll(".itemForm")[1].value,
+        message: document.querySelectorAll(".itemForm")[2].value,
+      }
+      
+      try {
+        const response = await fetch('send-email', {
+            method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result);
+        } else {
+          console.error('Error en la solicitud');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    
+
+
+    // fin del envio
+     
+        const Toast = Swal.mixin({
+  toast: true,
+  position: "center",
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true
+});
+Toast.fire({
+  icon: "success",
+  title: "Enviado exitosamente!"
+});  
+ // vacío los inputs
+ document.querySelectorAll(".itemForm")[0].value = "";
+          document.querySelectorAll(".itemForm")[1].value = "";
+          document.querySelectorAll(".itemForm")[2].value = "";
+}
+      });
+      
+    }
+  });
+   
+
+  function checkInputs(){
+    const items = document.querySelectorAll(".itemForm");
+    let allCheck = true;
+    for(const item of items){
+      if(item.value == ""){
+        item.classList.add("error");
+        item.nextElementSibling.classList.add("addError");
+        allCheck = false;
+      }
+
+      item.addEventListener("keyup", () => {
+        if(item.value != ""){
+         item.classList.remove("error");
+          item.nextElementSibling.classList.remove("addError");
+        } else{
+          item.classList.add("error");
+          item.nextElementSibling.classList.add("addError");
+        }
+      });
+    }
+    return allCheck;
+  }
+</script>
+
+<ContentSection title="Contacto" id="contacto" display="display:none">
+  <Fragment slot="lead">
+  </Fragment>
+
+  <div class="mt-6 max-w-7xl max-lg:max-w-3xl mx-auto bg-[#2E3D53] rounded-lg">
+    <div class="grid lg:grid-cols-2 items-center gap-14 sm:p-8 p-4 font-[sans-serif]">
+        <div class="flex flex-col items-center md:items-start">
+            <h1 class="text-4xl font-bold text-white">Ponte en contacto</h1>
+            <p class="text-sm text-gray-300 mt-4 leading-relaxed px-10 md:px-0">¿Tienes una gran idea o marca para desarrollar y necesitas ayuda? Ponte en contacto conmigo. Me encantaría conocer tu proyecto y brindarte ayuda.</p>
+            <br>
+            <img
+                    src="./imgProgramming.webp"
+                    class="h-auto max-w-80 rounded-lg shadow-none"
+                    alt="imagen programando"
+                />
+            <ul class="mt-12 space-y-8">
+                <li class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill='#fff'
+                        viewBox="0 0 479.058 479.058">
+                        <path
+                            d="M434.146 59.882H44.912C20.146 59.882 0 80.028 0 104.794v269.47c0 24.766 20.146 44.912 44.912 44.912h389.234c24.766 0 44.912-20.146 44.912-44.912v-269.47c0-24.766-20.146-44.912-44.912-44.912zm0 29.941c2.034 0 3.969.422 5.738 1.159L239.529 264.631 39.173 90.982a14.902 14.902 0 0 1 5.738-1.159zm0 299.411H44.912c-8.26 0-14.971-6.71-14.971-14.971V122.615l199.778 173.141c2.822 2.441 6.316 3.655 9.81 3.655s6.988-1.213 9.81-3.655l199.778-173.141v251.649c-.001 8.26-6.711 14.97-14.971 14.97z"
+                            data-original="#000000" />
+                    </svg>
+                    <a href={`mailto:${SITE.email}`} class="text-white text-sm ml-4">
+                        {SITE.email}
+                    </a>
+                </li>
+                <li class="flex text-white" style="align-items: center;">
+                  <Icon name="mdi:whatsapp"/>
+                    <a href={`https://api.whatsapp.com/send/?phone=${SITE.whatsapp.number}`} title="Enviar mensaje" class="text-sm ml-4">{SITE.whatsapp.display}</a>
+                </li>
+            </ul>
+
+           
+            </ul>
+
+  
+        </div>
+
+        <div class="bg-gray-100 p-6 rounded-lg">
+
+            <form id="contactForm" class="mt-8">
+                <div class="contWrapper">
+                  <input type='email' name='mail' placeholder='Mail'
+                      class="itemForm w-full rounded-lg py-3 px-4 text-gray-800 text-sm outline-[#2E3D53]" />
+                      <div class="error-txt">El mail no puede estar en blanco</div>
+                </div>
+                <div class="contWrapper">
+                  <input type='text' name='celphone' placeholder='Teléfono'
+                      class="itemForm w-full rounded-lg py-3 px-4 text-gray-800 text-sm outline-[#2E3D53]" maxlength="12"/>
+                      <div class="error-txt">El celular no puede estar en blanco</div>
+                </div>
+                <div style="min-height: 210px;">
+                  <textarea name='message' placeholder='Mensaje' rows="6"
+                      class="itemForm w-full rounded-lg px-4 text-gray-800 text-sm pt-3 outline-[#2E3D53]"></textarea>
+                      <span class="error-txt">El mensaje no puede estar en blanco</span>
+                </div>
+                <button type='submit'
+                    class="text-white bg-[#a91079] hover:bg-[#a91079e2] tracking-wide rounded-lg text-sm px-4 py-3 flex items-center justify-center w-full !mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill='#fff' class="mr-2" viewBox="0 0 548.244 548.244">
+                        <path fill-rule="evenodd" d="M392.19 156.054 211.268 281.667 22.032 218.58C8.823 214.168-.076 201.775 0 187.852c.077-13.923 9.078-26.24 22.338-30.498L506.15 1.549c11.5-3.697 24.123-.663 32.666 7.88 8.542 8.543 11.577 21.165 7.879 32.666L390.89 525.906c-4.258 13.26-16.575 22.261-30.498 22.338-13.923.076-26.316-8.823-30.728-22.032l-63.393-190.153z" clip-rule="evenodd" data-original="#000000" />
+                    </svg>
+                    Enviar mensaje
+                </button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+</ContentSection>
+
+<style>
+  .error-txt{
+    font-size: 16px;
+    color:#d93025;
+    text-align: left;
+    margin: 0 5px;
+    display: none;
+   
+  }
+
+  .itemForm.error{
+    border: 2px solid #d93025;
+  }
+
+  .addError{
+    display: block;
+  }
+
+  .contWrapper{
+    min-height: 90px;
+  }
+</style>

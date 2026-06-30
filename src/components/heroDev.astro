@@ -1,0 +1,39 @@
+<script type="module">
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReduced) {
+    document.getElementById("dark").style.background = "MidnightBlue";
+  } else {
+    const { tsParticles } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.0.3/+esm");
+    const { loadSlim } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/slim@3.0.3/+esm");
+
+    await loadSlim(tsParticles);
+
+    await tsParticles.load({
+      id: "dark",
+      options: {
+        fullScreen: { enable: false },
+        particles: {
+          color: { value: ["#aa73ff", "#f8c210", "#83d238", "#33b1f8"] },
+          links: { enable: true, color: "random" },
+          move: { enable: true },
+          number: { value: 60 },
+          opacity: { value: { min: 0.3, max: 1 } },
+          shape: { type: ["circle"] },
+        },
+      },
+    });
+  }
+</script>
+
+<div id="dark"></div>
+
+<style>
+  #dark {
+    background-color: MidnightBlue;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>

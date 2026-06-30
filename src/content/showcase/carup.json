@@ -1,0 +1,23 @@
+{
+  "title": "CARUP DESPACHO",
+  "image": "/proyectos/carup.webp",
+  "url": "carup",
+  "featured": 1,
+  "section": "proyectos",
+  "description": [
+    "Sistema de gestión y despacho de servicios de grúa, diseñado para coordinar operaciones en tiempo real entre el centro de despacho y los operadores en campo.",
+    "Construido con Java Spring Boot en el backend, expone una API REST consumida por el frontend web y la app mobile (Android/Flutter). Usa MySQL para persistir órdenes de servicio, clientes y historial de operaciones."
+  ],
+  "technologies": ["Java", "Spring Boot", "MySQL", "Node", "HTML", "Javascript", "CSS"],
+  "images": [
+    "/proyectos/carup.webp",
+    "/proyectos/carup2.webp",
+    "/proyectos/carup3.webp",
+    "/proyectos/carup4.webp",
+    "/proyectos/carup5.webp",
+    "/proyectos/carup6.webp"
+  ],
+  "demoUrl": "/#contacto",
+  "demoLabel": "Solicitar una demo",
+  "thumbsCount": 6
+}

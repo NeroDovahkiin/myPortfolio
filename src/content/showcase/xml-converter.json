@@ -1,0 +1,19 @@
+{
+  "title": "Conversor JS → XML",
+  "image": "/proyectos/conversor1.png",
+  "url": "xml-converter",
+  "featured": 3,
+  "section": "proyectos",
+  "description": [
+    "Cuando trabajé con PHP me encontré con un proceso repetitivo y tedioso: convertir variables de JavaScript a formato XML. Esta herramienta automatiza esa tarea.",
+    "Permite agregar un prefijo al nombre de la variable de salida, comillas y otras opciones de formato."
+  ],
+  "technologies": ["HTML", "Javascript", "CSS"],
+  "images": [
+    "/proyectos/conversor1.png",
+    "/proyectos/conversor2.png"
+  ],
+  "demoUrl": "https://codepen.io/NeroDovahkiin/full/QWwjqJQ",
+  "demoLabel": "Ver una demo",
+  "thumbsCount": 2
+}

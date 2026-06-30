@@ -1,0 +1,32 @@
+---
+import { getEntry } from "astro:content";
+import CompatibilityList from "~/components/conocimientos-list.astro";
+import ContentSection from "~/components/content-section.astro";
+
+const languagesEntry = await getEntry("skills", "languages");
+const platformsEntry = await getEntry("skills", "platforms");
+
+const languages = languagesEntry.data.items;
+const platforms = platformsEntry.data.items;
+---
+
+<ContentSection title="Conocimientos" id="conocimientos" display="display:none">
+  <Fragment slot="lead">
+    Algunos de mis conocimientos se basan en <span class="text-primary"
+      >Java</span
+    >, Spring Boot, C#, Python, <span class="text-primary">MySql</span>, bases
+    de datos, <span class="text-primary">Javascript</span>, HTML, CSS, AWS, Git,
+    etc.
+  </Fragment>
+  <CompatibilityList
+    items={languages}
+    title="Lenguajes"
+    url="https://docs.astro.build/core-concepts/framework-components/"
+  />
+  <CompatibilityList
+    items={platforms}
+    title="Frameworks y plataformas"
+    url="https://docs.astro.build/guides/deploy/"
+    cols={9}
+  />
+</ContentSection>

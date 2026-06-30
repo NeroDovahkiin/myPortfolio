@@ -1,0 +1,106 @@
+---
+import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import astronautImage from "~/assets/astronaut.png";
+import HeroDev from "~/components/heroDev.astro";
+import TypyingText from "~/components/textTyping.astro";
+
+const widths = [450, 800];
+const sizes = "(min-width: 640px) 42vw, 67vw";
+---
+
+<section class="relative h-full bg-black">
+  <div id="splash-bg-fallback" class="absolute inset-0">
+    <!--Hero image -->
+    <HeroDev />
+  </div>
+  <div class="relative grid h-full place-items-center sm:grid-cols-2">
+    <div class="w-full text-5xl sm:text-4xl md:text-5xl xl:text-7xl bg-blur sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none" >
+      <div class="pl-8 sm:pl-8 md:pl-8 lg:pl-20  2xl:pl-70 pt-10">
+        <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
+        <h2 class="whitespace-nowrap text-white">
+          <span class="text-cyan-400">me llamo</span> Federico
+        </h2>
+        <TypyingText />
+      </div>
+      <div class="w-full headerLinks">
+        <div class="flex justify-center py-10 m-auto gap-3 sm:justify-start sm:pl-8 md:pl-12 lg:pl-20  2xl:pl-70">
+          <a href="https://codepen.io/NeroDovahkiin" class="headIcon" aria-label="codepen"><Icon name="mdi:codepen" class="size-10 text-white" /></a>
+          <a href="https://www.linkedin.com/in/federicogmenezes/" class="headIcon" aria-label="linkedin"><Icon name="mdi:linkedin" class="size-10 text-white" /></a>
+          <a href="https://www.instagram.com/nero_fgm/" class="headIcon" aria-label="instagram"><Icon name="mdi:instagram" class="size-10 text-white" /></a>
+          <a href="https://github.com/NeroDovahkiin" class="headIcon" aria-label="github"><Icon name="mdi:github" class="size-10 text-white" /></a>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="astronaut"
+      class="z-0 max-w-5xl self-start sm:w-10/12 sm:self-auto sm:justify-self-center"
+    >
+      <Image
+        class="h-full w-full object-cover drop-shadow-astronaut"
+        src={astronautImage}
+        widths={widths}
+        sizes={sizes}
+        loading="eager"
+        alt="Programmer"
+      />
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <style>
+    #splash-bg-fallback {
+      display: block;
+    }
+    
+   
+  </style>
+</noscript>
+
+<style>
+    /* Oculta el div cuando la altura del viewport es menor a 350px */
+    @media (max-height: 350px) {
+            .headerLinks {
+                display: none;
+            }
+        }
+  @keyframes float {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(0, 30px, 0);
+    }
+  }
+
+  #astronaut {
+    animation: float linear 2.5s infinite alternate;
+  }
+
+  .drop-shadow-astronaut {
+    filter: drop-shadow(0 0 18px rgba(99, 210, 255, 0.35)) drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #astronaut {
+      /*@apply animate-none;*/
+    }
+
+    :global(#starfield) {
+      @apply hidden;
+    }
+
+    #splash-bg-fallback {
+      @apply block;
+    }
+  }
+
+  .headIcon{
+    background-color: darkslategrey;
+    padding: 5px;
+    border-radius: 10px;
+  }
+</style>
