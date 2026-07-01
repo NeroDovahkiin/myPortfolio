@@ -4,6 +4,19 @@
   "image": "/proyectos/ruteando/logo.webp",
   "section": "vibecoding",
   "featured": 1,
+  "description": [
+    "Motivado por mis futuros viajes, y lo engorroso de coordinar todos los puntos de interés, ubicaciones, cronogramas, costos, y todo lo que conlleva, cree esta app adaptada a mobile con PWA para organizar viajes.",
+    "Utilidades:",
+    "-Registro de viajes",
+    "-Cronograma de días, puntos de interés y recorrido",
+    "-Poder abrir los puntos en Waze o Maps directamente",
+    "-Registrar puntos visitados, pendientes y costos",
+    "-Cotizador de monedas",
+    "-Registro de gastos de combustible, así como la ubicación de las cargas (la obtiene del gps del dispositivo)",
+    "-Mapa global con los puntos y descripciones, con sus correspondientes filtros por categoría",
+    "-Obtención del clima del promedio de latitudes/longitudes de las actividades de cada día",
+    "-TO-DO: Compartir viaje y viaje colaborativo"
+  ],
   "technologies": [
     "Node",
     "Tailwind",

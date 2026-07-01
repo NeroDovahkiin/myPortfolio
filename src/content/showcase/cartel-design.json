@@ -1,17 +1,21 @@
 {
   "title": "Diseñador de carteles",
-  "image": "/proyectos/cartel/cartel.webp",
   "url": "cartel-design",
+  "image": "/proyectos/cartel/cartel.webp",
   "section": "conceptos",
   "description": [
     "Experimento para desarrollar un creador de cartelería personalizado, pensado para integrarlo a proyectos de e-commerce o tiendas online.",
     "Permite diseñar carteles con texto, colores y elementos de forma interactiva usando Canvas HTML."
   ],
-  "technologies": ["HTML", "Javascript", "CSS"],
+  "technologies": [
+    "HTML",
+    "Javascript",
+    "CSS"
+  ],
   "images": [
     "/proyectos/cartel/cartel.webp",
-    "/proyectos/cartel/cartel1.webp",
-    "/proyectos/cartel/cartel3.webp"
+    "/proyectos/cartel/cartel3.webp",
+    "/proyectos/cartel-design/captura-de-pantalla-2026-06-30-221157.webp"
   ],
   "demoUrl": "https://nerodovahkiin.github.io/pj/",
   "demoLabel": "Probar",

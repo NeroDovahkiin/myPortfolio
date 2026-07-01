@@ -13,7 +13,23 @@ export async function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-const thumbsCount = project.thumbsCount ?? project.images?.length ?? 3;
+const hasGallery = project.images && project.images.length > 0;
+
+// Group description lines: consecutive "- " lines become a single bullet list block
+type Block = { type: "p"; text: string } | { type: "ul"; items: string[] };
+const descBlocks: Block[] = [];
+for (const line of project.description ?? []) {
+  if (line.startsWith("- ")) {
+    const last = descBlocks[descBlocks.length - 1];
+    if (last?.type === "ul") {
+      last.items.push(line.slice(2));
+    } else {
+      descBlocks.push({ type: "ul", items: [line.slice(2)] });
+    }
+  } else {
+    descBlocks.push({ type: "p", text: line });
+  }
+}
 ---
 
 <html lang="es">
@@ -22,195 +38,348 @@ const thumbsCount = project.thumbsCount ?? project.images?.length ?? 3;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{project.title} — fGuzzoDev</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   </head>
 
   <body>
-    <header>
-      <nav class="bg-[#111827] px-4 py-2.5 text-white lg:px-6">
-        <div class="mx-auto flex flex-wrap items-center justify-between px-5">
-          <a class="flex items-center gap-3 hover:!text-default" href="/">
-            <h1 class="sr-only">fGuzzoDev</h1>
-            <Icon name="logomark" class="size-10" />
-            <Icon name="wordmark" class="hidden h-5 sm:block" />
-          </a>
-          <a href="/" class="flex items-center justify-center gap-1">
-            <Icon name="mdi:arrow-left" class="size-8" />
-            <span>Volver</span>
-          </a>
+
+    <nav>
+      <div class="nav-inner">
+        <a href="/" class="nav-logo">
+          <Icon name="logomark" class="size-8" />
+          <Icon name="wordmark" class="wordmark" />
+        </a>
+        <a href="/" class="nav-back">
+          <Icon name="mdi:arrow-left" class="size-4" />
+          Volver
+        </a>
+      </div>
+    </nav>
+
+    <main>
+
+      <h1>{project.title}</h1>
+
+      {project.technologies && project.technologies.length > 0 && (
+        <div class="tech-list">
+          {project.technologies.map((tech) => (
+            <span class="tech-badge">{tech}</span>
+          ))}
         </div>
-      </nav>
-    </header>
+      )}
 
-    <section class="py-10 lg:py-24">
-      <div class="max-w-9xl mx-auto px-4 sm:px-6">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div class="layout">
 
-          <div class="pro-detail mx-auto flex w-full max-w-screen-lg flex-col max-lg:mx-auto">
-            <h2 class="font-manrope mb-2 font-bold leading-10 text-3xl">
-              <span><Icon name="mdi:code-json" class="display: inline" /></span>
-              {project.title}
-            </h2>
+        <div class="info">
+          {descBlocks.map((block) =>
+            block.type === "ul" ? (
+              <ul class="desc-list">
+                {block.items.map((item) => <li>{item}</li>)}
+              </ul>
+            ) : (
+              <p>{block.text}</p>
+            )
+          )}
 
-            {project.description?.map((para) => (
-              <p class="mb-4 font-normal sm:text-base md:text-lg">{para}</p>
-            ))}
+          {project.demoUrl && (
+            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" class="demo-btn">
+              {project.demoLabel ?? "Ver demo"}
+              <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+              </svg>
+            </a>
+          )}
+        </div>
 
-            <hr />
+        {hasGallery && (
+          <div class="gallery">
+            <div class="carousel">
+              <div class="slides" id="slides">
+                {project.images!.map((src, i) => (
+                  <div class="slide">
+                    <img
+                      src={src}
+                      alt={`${project.title} — imagen ${i + 1}`}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
 
-            <div class="mt-10 flex flex-col items-center gap-10 text-center">
-              {project.technologies && project.technologies.length > 0 && (
-                <div>
-                  <h3 class="font-bold text-xl my-3">Tecnologías</h3>
-                  <p>
-                    {project.technologies.map((tech) => (
-                      <span class="me-2 rounded bg-gray-100 px-2.5 py-0.5 font-medium text-gray-800 text-xs dark:bg-gray-700 dark:text-gray-300">
-                        {tech}
-                      </span>
+              {project.images!.length > 1 && (
+                <>
+                  <button class="arrow arrow-prev" id="prev" aria-label="Anterior">&#8592;</button>
+                  <button class="arrow arrow-next" id="next" aria-label="Siguiente">&#8594;</button>
+                  <div class="dots" id="dots">
+                    {project.images!.map((_, i) => (
+                      <button class={`dot ${i === 0 ? "active" : ""}`} data-index={i} aria-label={`Imagen ${i + 1}`}></button>
                     ))}
-                  </p>
-                </div>
-              )}
-
-              {project.demoUrl && (
-                <div>
-                  <a
-                    href={project.demoUrl}
-                    class="inline-flex items-center justify-center rounded-lg bg-gray-50 p-2 px-4 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    <span class="w-full">{project.demoLabel ?? "Ver demo"}</span>
-                    <svg class="ms-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"></path>
-                    </svg>
-                  </a>
-                </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
+        )}
 
-          {project.images && project.images.length > 0 && (
-            <div id="container">
-              <div
-                style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
-                class="swiper mySwiper2"
-              >
-                <div class="swiper-wrapper">
-                  {project.images.map((src, i) => (
-                    <div class="swiper-slide">
-                      <img src={src} alt={`${project.title} - imagen ${i + 1}`} loading={i === 0 ? "eager" : "lazy"} decoding="async" />
-                    </div>
-                  ))}
-                </div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-              </div>
-              <div class="swiper mySwiper">
-                <div class="swiper-wrapper">
-                  {project.images.map((src, i) => (
-                    <div class="swiper-slide">
-                      <img src={src} alt={`${project.title} - thumb ${i + 1}`} loading="lazy" decoding="async" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-        </div>
       </div>
-    </section>
+    </main>
+
   </body>
 </html>
 
-<script define:vars={{ thumbsCount }}>
-  import("https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs").then(
-    ({ default: Swiper }) => {
-      const thumbSwiper = new Swiper(".mySwiper", {
-        loop: true,
-        spaceBetween: 20,
-        slidesPerView: thumbsCount > 4 ? 4 : thumbsCount,
-        freeMode: true,
-        watchSlidesProgress: true,
-      });
-      new Swiper(".mySwiper2", {
-        loop: true,
-        spaceBetween: 10,
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-        thumbs: { swiper: thumbSwiper },
-      });
-    }
-  );
+<script>
+  const slides = document.getElementById("slides");
+  const dots = document.querySelectorAll(".dot");
+  const total = document.querySelectorAll(".slide").length;
+  let current = 0;
+
+  function goTo(n: number) {
+    current = (n + total) % total;
+    (slides as HTMLElement).style.transform = `translateX(-${current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle("active", i === current));
+  }
+
+  document.getElementById("prev")?.addEventListener("click", () => goTo(current - 1));
+  document.getElementById("next")?.addEventListener("click", () => goTo(current + 1));
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => goTo(Number((dot as HTMLElement).dataset.index)));
+  });
+
+  // Touch swipe
+  const carousel = document.querySelector(".carousel") as HTMLElement;
+  if (carousel) {
+    let startX = 0;
+    carousel.addEventListener("touchstart", (e) => {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+    carousel.addEventListener("touchend", (e) => {
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+    }, { passive: true });
+  }
 </script>
 
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    background-image: url("/bground.webp");
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: #07070f;
+    color: #f3f4f6;
+    font-family: inherit;
+    min-height: 100vh;
   }
 
-  #container {
-    width: 100%;
-    height: 80vh;
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 80% 40% at 60% 0%, rgba(99,102,241,0.14), transparent);
   }
 
-  .swiper {
-    width: 100%;
-    height: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 10px;
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(7, 7, 15, 0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 0.75rem 1.5rem;
   }
-
-  .mySwiper2 {
-    height: 80%;
-    width: 100%;
-  }
-
-  .mySwiper {
-    height: 20%;
-    box-sizing: border-box;
-    padding: 10px 0;
-  }
-
-  .mySwiper .swiper-slide {
-    width: 25%;
-    height: 100%;
-    opacity: 0.4;
-  }
-
-  .mySwiper .swiper-slide-thumb-active {
-    opacity: 1;
-  }
-
-  .swiper-slide {
-    text-align: center;
-    font-size: 18px;
-    background: #fff;
+  .nav-inner {
+    max-width: 70rem;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-size: cover;
-    background-position: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    opacity: 0.8;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-logo:hover { opacity: 1; }
+  .wordmark { height: 1rem; display: none; }
+  @media (min-width: 640px) { .wordmark { display: block; } }
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: #fff; }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+  @media (min-width: 1024px) {
+    main { padding: 2.5rem 4rem 5rem; }
   }
 
-  .swiper-slide img {
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .tech-badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.28);
+    color: #a5b4fc;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  @media (min-width: 1024px) {
+    .layout { grid-template-columns: 1.4fr 1.8fr; gap: 3.5rem; align-items: start; }
+  }
+  @media (min-width: 1400px) {
+    .layout { grid-template-columns: 1.4fr 2fr; gap: 4rem; }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .info p {
+    color: #d1d5db;
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+  .desc-list {
+    color: #d1d5db;
+    line-height: 1.4;
+    font-size: 1rem;
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+  .desc-list li {
+    margin: 0;
+    padding: 0;
+  }
+  .desc-list li::marker {
+    color: #6366f1;
+  }
+  .demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    background: #4f46e5;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    width: fit-content;
+    transition: background 0.2s;
+  }
+  .demo-btn:hover { background: #6366f1; }
+
+  /* Carousel */
+  .carousel {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #0d0d1a;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .slides {
+    display: flex;
+    transition: transform 0.35s ease;
+    will-change: transform;
+  }
+  .slide {
+    flex: 0 0 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    max-height: 75vh;
+    background: #0d0d1a;
+  }
+  .slide img {
     display: block;
     width: 100%;
-    height: 100%;
+    max-height: 75vh;
     object-fit: contain;
-    background-color: black;
   }
 
-  .pro-detail {
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    z-index: 10;
+  }
+  .arrow:hover { background: rgba(0,0,0,0.85); }
+  .arrow-prev { left: 0.75rem; }
+  .arrow-next { right: 0.75rem; }
+
+  .dots {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.4rem;
+    background: rgba(0,0,0,0.45);
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  .dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .dot.active {
+    background: #fff;
+    transform: scale(1.35);
   }
 </style>

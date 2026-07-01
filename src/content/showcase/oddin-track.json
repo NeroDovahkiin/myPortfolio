@@ -4,12 +4,24 @@
   "image": "/proyectos/oddin-track/ot-logo.webp",
   "section": "vibecoding",
   "featured": 2,
+  "description": [
+    "Simple app adaptada a PWA para llevar registro de los mantenimientos, cargas de combustible, y otras actividades de mi vehículo.",
+    "Registro repuestos, costos, talleres, estaciones de servicio, entre otros."
+  ],
   "technologies": [
     "Node",
     "Tailwind",
     "Supabase",
     "Vanilla JS"
   ],
+  "images": [
+    "/proyectos/oddin-track/prev.webp",
+    "/proyectos/oddin-track/captura-de-pantalla-2026-06-30-203826.webp",
+    "/proyectos/oddin-track/captura-de-pantalla-2026-06-30-203918.webp",
+    "/proyectos/oddin-track/captura-de-pantalla-2026-06-30-203956.webp",
+    "/proyectos/oddin-track/rep.webp"
+  ],
   "demoUrl": "https://oddin-track-production.up.railway.app/",
-  "demoLabel": "Acceder"
+  "demoLabel": "Acceder",
+  "thumbsCount": 5
 }

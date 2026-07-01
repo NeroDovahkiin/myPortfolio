@@ -242,7 +242,7 @@ const existingThumb: string = project?.image ?? "";
         e.target.value = "";
       });
 
-      function removeGallery(btn) {
+      window.removeGallery = function(btn) {
         const path = btn.dataset.path;
         btn.closest(".relative").remove();
         const idx = galleryPaths.indexOf(path);
