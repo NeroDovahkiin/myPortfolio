@@ -1,0 +1,29 @@
+{
+  "title": "Gestión de turnos",
+  "url": "turnos_crp",
+  "image": "/proyectos/turnos_crp/turnoslogo.webp",
+  "section": "vibecoding",
+  "description": [
+    "Aplicación diseñada para la necesidad de un cliente, de gestionar el turno diario de su personal, ya que llevaban muchas variables con distintos descansos rotativos y diferentes modalidades de días libres, lo que dificultaba la gestión.",
+    "También lleva el registro y aviso de los cumpleaños de los funcionarios, alertas, automatización de licencias y licencias médicas, entre otros.",
+    "Características:",
+    "-ABM de auxiliadores",
+    "-Cumpleaños y alertas",
+    "-Calendario mensual pre-programado",
+    "-Panel de atajos útiles",
+    "-Generación de turnos",
+    "-Automatización de inicio/fin de licencias"
+  ],
+  "technologies": [
+    "Astro",
+    "Tailwind",
+    "Vanilla JS"
+  ],
+  "images": [
+    "/proyectos/turnos_crp/calendario.webp",
+    "/proyectos/turnos_crp/222.webp",
+    "/proyectos/turnos_crp/cumples.webp",
+    "/proyectos/turnos_crp/dbvsdgds.webp"
+  ],
+  "demoLabel": "Solicitar una demo"
+}

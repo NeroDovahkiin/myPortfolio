@@ -1,0 +1,33 @@
+{
+  "title": "Centriq",
+  "url": "centriq",
+  "image": "/proyectos/centriq/logocentriw.webp",
+  "section": "vibecoding",
+  "description": [
+    "Realizada para la necesidad de un cliente, de llevar un historial de incidencias, en la oficina y sobre sus auxiliadores de servicio.",
+    "En la misma encontramos los turnos de cada día, con sus respectivos choferes y horarios, así como la creación de tareas y el registro de incidencias visible solo por el usuario que las crea y los administradores, así como el control de lectura por los mismos.",
+    "Algunas características:",
+    "-Visualización y modificación de turnos",
+    "-Registro de incidencias globales",
+    "-Registro de incidencias sobre los auxiliadores",
+    "-Gestión de tareas"
+  ],
+  "technologies": [
+    "Node js",
+    "Tailwind",
+    "Supabase",
+    "Vanilla JS"
+  ],
+  "images": [
+    "/proyectos/centriq/c1.webp",
+    "/proyectos/centriq/2.webp",
+    "/proyectos/centriq/3.webp",
+    "/proyectos/centriq/4.webp",
+    "/proyectos/centriq/5.webp",
+    "/proyectos/centriq/6.webp",
+    "/proyectos/centriq/8.webp",
+    "/proyectos/centriq/9.webp",
+    "/proyectos/centriq/10.webp"
+  ],
+  "demoLabel": "Solicitar una demo"
+}

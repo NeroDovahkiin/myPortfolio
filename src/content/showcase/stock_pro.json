@@ -1,0 +1,37 @@
+{
+  "title": "Stock Pro!",
+  "url": "stock_pro",
+  "image": "/proyectos/stock_pro/logostockpng.webp",
+  "section": "vibecoding",
+  "description": [
+    "Aplicación integral para gestión de stock de baterías, surge de la necesidad de poder llevar un registro y orden de las compras y ventas de batería para un cliente,",
+    "disponibilizando una forma fácil y eficaz de monitorear los movimientos en el stock.",
+    "Algunas características:",
+    "-Alta, baja y modificación de modelos de baterías",
+    "-Chat en tiempo real para el equipo",
+    "-Movimientos de baterías del stock entre los móviles y la base",
+    "-Dashboard informativo, con alertas de stock bajo",
+    "-Historial de movimientos, y ventas detallado",
+    "-Snapshots de control de stock",
+    "-Registro de facturas asociadas a las compras",
+    "-Exportación de registros",
+    "-Búsqueda y reportes de modelos con sus atributos"
+  ],
+  "technologies": [
+    "Node js",
+    "Tailwind",
+    "Supabase",
+    "Vanilla JS"
+  ],
+  "images": [
+    "/proyectos/stock_pro/sin-t-tulo.webp",
+    "/proyectos/stock_pro/2.webp",
+    "/proyectos/stock_pro/3.webp",
+    "/proyectos/stock_pro/4.webp",
+    "/proyectos/stock_pro/5.webp",
+    "/proyectos/stock_pro/6.webp",
+    "/proyectos/stock_pro/7.webp",
+    "/proyectos/stock_pro/8.webp"
+  ],
+  "demoLabel": "Solicitar una demo"
+}
