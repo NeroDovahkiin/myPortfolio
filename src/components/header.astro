@@ -88,6 +88,7 @@ const navItems: Array<NavItem> = [
 
   const header = document.querySelector("#page-header") as HTMLElement;
   const page = document.documentElement;
+  const heroScroll = document.querySelector("#heroScroll") as HTMLElement | null;
   const menu = document.querySelector(`#${menuModalId} ul`);
   const openNavButton = document.querySelector("#open-nav-button");
   const closeNavButton = document.querySelector("#close-nav-button");
@@ -108,15 +109,79 @@ const navItems: Array<NavItem> = [
   openNavButton.addEventListener("click", openMenu);
   closeNavButton.addEventListener("click", closeMenu);
 
-  document.addEventListener("scroll", () => {
-    const d = page.clientHeight - page.scrollTop - header.offsetHeight;
-    header.classList.toggle("fixed-header", d < 0);
-  });
+  // The hero itself doesn't visually move while its scroll-driven frames are
+  // scrubbing (it's pinned via `position: sticky`) — it only starts actually
+  // sliding up once that scrubbing finishes. The nav mirrors that: it stays
+  // put at the bottom of the hero for the whole scrubbing phase, then rides
+  // up glued to the hero 1:1 as it scrolls away (same px-per-px rate as the
+  // hero's own motion, not a distance divided over an arbitrary range), so
+  // it docks at the top the instant it catches up instead of lagging behind.
+  //
+  // Layout metrics (offsetHeight, innerHeight) are cached and only
+  // recomputed on resize — reading them inside the scroll handler itself
+  // forces a synchronous layout on every scroll event (right after writing
+  // the transform below), which is what showed up as a small stutter/bounce
+  // during fast scrolling.
+  let restOffset = 0;
+  let heroRisesAt = 0;
+
+  function recomputeHeroNavMetrics(heroEl: HTMLElement) {
+    const viewportH = window.innerHeight;
+    restOffset = Math.max(viewportH - header.offsetHeight, 0);
+    heroRisesAt = Math.max(heroEl.offsetHeight - viewportH, 0);
+  }
+
+  function updateHeaderWithHero() {
+    const risen = Math.max(page.scrollTop - heroRisesAt, 0);
+    const offset = Math.max(restOffset - risen, 0);
+
+    header.style.transform = `translateY(${offset}px)`;
+    header.classList.toggle("fixed-header", offset <= 0);
+  }
+
+  if (heroScroll) {
+    header.style.position = "fixed";
+    header.style.top = "0";
+    header.style.bottom = "auto";
+
+    recomputeHeroNavMetrics(heroScroll);
+    window.addEventListener("resize", () => recomputeHeroNavMetrics(heroScroll));
+
+    // Driven by requestAnimationFrame instead of the "scroll" event: the
+    // event only fires when the browser gets around to dispatching it,
+    // which can trail a frame or more behind the actual (compositor-driven)
+    // scroll position under load — enough to read as a slight lag/bounce
+    // on an element with no smoothing of its own. Polling scrollTop right
+    // before paint keeps it reading the freshest position every frame.
+    (function loop() {
+      updateHeaderWithHero();
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    document.addEventListener("scroll", () => {
+      const d = page.clientHeight - page.scrollTop - header.offsetHeight;
+      header.classList.toggle("fixed-header", d < 0);
+    });
+  }
 
   menu.addEventListener("click", (event) => {
     if ((event.target as HTMLElement).tagName === "A") {
       closeMenu();
     }
+  });
+
+  // Smooth-scroll in-page nav links via JS instead of the global CSS
+  // `scroll-behavior: smooth` — that property also applies to native wheel/
+  // trackpad scrolling and fights with the hero's scroll-linked animation,
+  // which is what caused the nav's bounce.
+  document.addEventListener("click", (event) => {
+    const link = (event.target as HTMLElement).closest('a[href^="#"]');
+    const hash = link?.getAttribute("href");
+    if (!hash || hash.length < 2) return;
+    const target = document.querySelector(hash);
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 </script>
 

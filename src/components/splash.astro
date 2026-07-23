@@ -1,106 +1,311 @@
 ---
-import { Icon } from "astro-icon/components";
-import { Image } from "astro:assets";
-import astronautImage from "~/assets/astronaut.png";
-import HeroDev from "~/components/heroDev.astro";
 import TypyingText from "~/components/textTyping.astro";
-
-const widths = [450, 800];
-const sizes = "(min-width: 640px) 42vw, 67vw";
 ---
 
-<section class="relative h-full bg-black">
-  <div id="splash-bg-fallback" class="absolute inset-0">
-    <!--Hero image -->
-    <HeroDev />
-  </div>
-  <div class="relative grid h-full place-items-center sm:grid-cols-2">
-    <div class="w-full text-5xl sm:text-4xl md:text-5xl xl:text-7xl bg-blur sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none" >
-      <div class="pl-8 sm:pl-8 md:pl-8 lg:pl-20  2xl:pl-70 pt-10">
-        <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
-        <h2 class="whitespace-nowrap text-white">
-          <span class="text-cyan-400">me llamo</span> Federico
-        </h2>
+<section class="hero-scroll" id="heroScroll">
+  <div class="hero-sticky">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-vignette"></div>
+
+    <div class="hero-copy">
+      <h3 class="hero-copy__greeting">Bienvenid@!</h3>
+      <h2 class="hero-copy__name">
+        <span class="text-cyan-400">me llamo</span> Federico
+      </h2>
+      <div class="hero-copy__role">
         <TypyingText />
-      </div>
-      <div class="w-full headerLinks">
-        <div class="flex justify-center py-10 m-auto gap-3 sm:justify-start sm:pl-8 md:pl-12 lg:pl-20  2xl:pl-70">
-          <a href="https://codepen.io/NeroDovahkiin" class="headIcon" aria-label="codepen"><Icon name="mdi:codepen" class="size-10 text-white" /></a>
-          <a href="https://www.linkedin.com/in/federicogmenezes/" class="headIcon" aria-label="linkedin"><Icon name="mdi:linkedin" class="size-10 text-white" /></a>
-          <a href="https://www.instagram.com/nero_fgm/" class="headIcon" aria-label="instagram"><Icon name="mdi:instagram" class="size-10 text-white" /></a>
-          <a href="https://github.com/NeroDovahkiin" class="headIcon" aria-label="github"><Icon name="mdi:github" class="size-10 text-white" /></a>
-        </div>
       </div>
     </div>
 
-    <div
-      id="astronaut"
-      class="z-0 max-w-5xl self-start sm:w-10/12 sm:self-auto sm:justify-self-center"
-    >
-      <Image
-        class="h-full w-full object-cover drop-shadow-astronaut"
-        src={astronautImage}
-        widths={widths}
-        sizes={sizes}
-        loading="eager"
-        alt="Programmer"
-      />
+    <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-hint__mouse"><div class="scroll-hint__dot"></div></div>
     </div>
   </div>
 </section>
 
-<noscript>
-  <style>
-    #splash-bg-fallback {
-      display: block;
-    }
-    
-   
-  </style>
-</noscript>
-
 <style>
-    /* Oculta el div cuando la altura del viewport es menor a 350px */
-    @media (max-height: 350px) {
-            .headerLinks {
-                display: none;
-            }
-        }
-  @keyframes float {
+  .hero-scroll {
+    position: relative;
+    /* Scroll distance driving the frame sequence — scaled so the vh-per-frame
+       ratio stays roughly constant if FRAME_COUNT below changes. */
+    height: 500vh;
+    background: #000;
+  }
+
+  .hero-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #000 url("/hero-frames/001.webp") center / cover no-repeat;
+  }
+
+  #heroCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.65) 0%,
+      rgba(0, 0, 0, 0.25) 30%,
+      rgba(0, 0, 0, 0.25) 70%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+
+  .hero-copy {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    z-index: 5;
+    color: #fff;
+  }
+
+  .hero-copy__greeting {
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+
+  .hero-copy__name {
+    font-size: clamp(1.5rem, 3.4vw, 2.5rem);
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+
+  .hero-copy__role {
+    display: flex;
+    justify-content: center;
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    z-index: 5;
+    transition: opacity 0.3s ease;
+  }
+  .scroll-hint__mouse {
+    width: 22px;
+    height: 34px;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    position: relative;
+  }
+  .scroll-hint__dot {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 3px;
+    height: 6px;
+    background: #fff;
+    border-radius: 2px;
+    transform: translateX(-50%);
+    animation: scrollDot 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollDot {
     0% {
-      transform: translate3d(0, 0, 0);
+      opacity: 1;
+      top: 6px;
     }
-
+    60% {
+      opacity: 0;
+      top: 16px;
+    }
     100% {
-      transform: translate3d(0, 30px, 0);
+      opacity: 0;
+      top: 6px;
     }
   }
 
-  #astronaut {
-    animation: float linear 2.5s infinite alternate;
-  }
-
-  .drop-shadow-astronaut {
-    filter: drop-shadow(0 0 18px rgba(99, 210, 255, 0.35)) drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #astronaut {
-      /*@apply animate-none;*/
+  @media (max-width: 720px) {
+    .hero-copy {
+      left: 6%;
+      right: 6%;
+      max-width: none;
     }
-
-    :global(#starfield) {
-      @apply hidden;
-    }
-
-    #splash-bg-fallback {
-      @apply block;
-    }
-  }
-
-  .headIcon{
-    background-color: darkslategrey;
-    padding: 5px;
-    border-radius: 10px;
   }
 </style>
+
+<script>
+  const FRAME_COUNT = 101;
+  const FRAME_PATH = (i: number) => `/hero-frames/${String(i).padStart(3, "0")}.webp`;
+
+  const canvas = document.getElementById("heroCanvas") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d")!;
+  const heroScroll = document.getElementById("heroScroll")!;
+  const scrollHint = document.getElementById("scrollHint")!;
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const images: HTMLImageElement[] = new Array(FRAME_COUNT);
+
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let canvasW = 0;
+  let canvasH = 0;
+
+  let targetFrame = 0; // frame implied by current scroll position
+  let renderedFrame = -1; // last frame index actually drawn
+  let smoothFrame = 0; // frame actually rendered, spring-driven toward targetFrame
+  let frameVelocity = 0; // current speed of smoothFrame, in frames/second
+  let lastTick = 0;
+
+  // Damped-spring constants: smoothFrame chases targetFrame instead of
+  // jumping to it. Damping is deliberately a bit below the critical point
+  // for SPRING_STIFFNESS, so residual velocity carries the sequence a few
+  // extra frames past where you stopped scrolling before it settles back —
+  // that trailing coast is what reads as "inertia".
+  const SPRING_STIFFNESS = 16;
+  const SPRING_DAMPING = 6;
+
+  // Hard cap on playback speed (frames/second), applied on top of the
+  // spring. No matter how large a jump the scroll implies, frameVelocity
+  // can't exceed this — it just falls behind and coasts back in afterward,
+  // instead of the spring accelerating to an ever-larger speed.
+  const MAX_FRAME_VELOCITY = 28;
+
+  // 1 = original frames, lower = darker.
+  const FRAME_BRIGHTNESS = 0.6;
+
+  function clamp01(v: number) {
+    return Math.max(0, Math.min(1, v));
+  }
+
+  function clampIndex(i: number) {
+    return Math.max(0, Math.min(FRAME_COUNT - 1, i));
+  }
+
+  function resizeCanvas() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvasW = canvas.clientWidth;
+    canvasH = canvas.clientHeight;
+    canvas.width = Math.round(canvasW * dpr);
+    canvas.height = Math.round(canvasH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    renderedFrame = -1; // force redraw at new size
+  }
+
+  function drawFrame(index: number) {
+    const img = images[index];
+    if (!img || !img.complete || img.naturalWidth === 0) return;
+
+    const imgRatio = img.naturalWidth / img.naturalHeight;
+    const canRatio = canvasW / canvasH;
+
+    let drawW, drawH, offX, offY;
+    if (imgRatio > canRatio) {
+      drawH = canvasH;
+      drawW = drawH * imgRatio;
+      offX = (canvasW - drawW) / 2;
+      offY = 0;
+    } else {
+      drawW = canvasW;
+      drawH = drawW / imgRatio;
+      offX = 0;
+      offY = (canvasH - drawH) / 2;
+    }
+
+    ctx.clearRect(0, 0, canvasW, canvasH);
+    ctx.filter = `brightness(${FRAME_BRIGHTNESS})`;
+    ctx.drawImage(img, offX, offY, drawW, drawH);
+    renderedFrame = index;
+  }
+
+  // Cached instead of recomputed inside onScroll: reading layout metrics
+  // (offsetHeight/innerHeight) on every scroll event forces a synchronous
+  // layout right after the canvas draw's style changes, which shows up as
+  // stutter during fast scrolling. Only resize needs a fresh measurement.
+  let scrollDistance = 1;
+
+  function recomputeScrollDistance() {
+    scrollDistance = Math.max(heroScroll.offsetHeight - window.innerHeight, 1);
+  }
+
+  function onScroll() {
+    const progress = clamp01(window.scrollY / scrollDistance);
+
+    targetFrame = progress * (FRAME_COUNT - 1);
+    scrollHint.style.opacity = String(1 - clamp01(progress / 0.05));
+  }
+
+  function tick(now: number) {
+    const dt = lastTick ? Math.min((now - lastTick) / 1000, 0.045) : 0;
+    lastTick = now;
+
+    if (prefersReducedMotion) {
+      smoothFrame = targetFrame;
+      frameVelocity = 0;
+    } else if (dt > 0) {
+      const accel = (targetFrame - smoothFrame) * SPRING_STIFFNESS - frameVelocity * SPRING_DAMPING;
+      frameVelocity += accel * dt;
+      frameVelocity = Math.max(-MAX_FRAME_VELOCITY, Math.min(MAX_FRAME_VELOCITY, frameVelocity));
+      smoothFrame += frameVelocity * dt;
+
+      if (Math.abs(targetFrame - smoothFrame) < 0.02 && Math.abs(frameVelocity) < 0.02) {
+        smoothFrame = targetFrame;
+        frameVelocity = 0;
+      }
+    }
+
+    const index = clampIndex(Math.round(smoothFrame));
+    if (index !== renderedFrame) drawFrame(index);
+
+    requestAnimationFrame(tick);
+  }
+
+  function preload() {
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = FRAME_PATH(i);
+      images[i - 1] = img;
+    }
+    images[0].addEventListener("load", () => drawFrame(0), { once: true });
+  }
+
+  resizeCanvas();
+  recomputeScrollDistance();
+  preload();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+    recomputeScrollDistance();
+    drawFrame(Math.round(smoothFrame));
+  });
+
+  // Snap straight to the first frame (e.g. for a "back to top" jump)
+  // instead of letting the spring ease back through the whole sequence.
+  window.addEventListener("hero:jump-to-start", () => {
+    targetFrame = 0;
+    smoothFrame = 0;
+    frameVelocity = 0;
+    drawFrame(0);
+  });
+
+  onScroll();
+  requestAnimationFrame(tick);
+</script>

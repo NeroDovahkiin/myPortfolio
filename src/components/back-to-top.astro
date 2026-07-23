@@ -1,0 +1,56 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<button
+  id="backToTop"
+  type="button"
+  aria-label="Volver al inicio"
+  class="back-to-top fixed bottom-6 right-6 z-40 flex size-12 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-all duration-300 hover:brightness-110"
+>
+  <Icon name="mdi:arrow-up" class="size-6" />
+</button>
+
+<style>
+  .back-to-top {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+  }
+  .back-to-top.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById("backToTop");
+  const trigger = document.getElementById("features");
+
+  if (btn && trigger) {
+    // Once the "Timeline" section has been reached (entering the viewport,
+    // or already scrolled past it) the button stays visible for the rest of
+    // the page; scrolling back up above it hides it again.
+    const observer = new IntersectionObserver(([entry]) => {
+      const pastTrigger = entry.isIntersecting || entry.boundingClientRect.top < 0;
+      btn.classList.toggle("is-visible", pastTrigger);
+    });
+    observer.observe(trigger);
+
+    btn.addEventListener("click", () => {
+      // A smooth scroll back to the top would pass through the hero's own
+      // scroll range on the way, which would replay its frame sequence
+      // backwards. Jump instantly instead, and let the hero know to snap
+      // straight to its first frame rather than easing back to it.
+      window.dispatchEvent(new Event("hero:jump-to-start"));
+      window.scrollTo(0, 0);
+
+      // An instant jump skips straight from "past #intro" to "before
+      // #intro" without ever rendering it as intersecting, so the observer
+      // above has nothing to react to — hide the button ourselves instead
+      // of waiting on a callback that won't fire.
+      btn.classList.remove("is-visible");
+    });
+  }
+</script>

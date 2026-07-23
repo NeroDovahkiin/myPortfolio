@@ -7,6 +7,7 @@ import Header from "~/components/header.astro";
 import Intro from "~/components/intro.astro";
 import Proyectos from "~/components/proyectos.astro";
 import Splash from "~/components/splash.astro";
+import BackToTop from "~/components/back-to-top.astro";
 import PruebaConceptos from "~/components/prueba-conceptos.astro";
 import Vibecoding from "~/components/vibecoding.astro";
 import Contacto from "~/components/contacto.astro";
@@ -19,7 +20,7 @@ const description =
 ---
 
 <!doctype html>
-<html lang="es" class="h-full motion-safe:scroll-smooth" data-theme="dark">
+<html lang="es" class="h-full" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -36,6 +37,15 @@ const description =
     <meta property="og:image" content={image} />
     <meta property="og:url" content={site} />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- always start at the top of the scroll-driven hero, instead of the
+         browser restoring wherever the user last scrolled to -->
+    <script is:inline>
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+    </script>
 
     <!-- initialize theme -->
     <script is:inline>
@@ -79,5 +89,5 @@ const description =
 
     </div>
     <Footer />
-  </body>
+    <BackToTop />
 </html>
