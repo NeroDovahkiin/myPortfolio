@@ -10,12 +10,21 @@ import TypyingText from "~/components/textTyping.astro";
     <div class="hero-fx-layer-local" id="heroFxLayerLocal" aria-hidden="true"></div>
 
     <div class="hero-copy">
-      <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
-      <h2 class="hero-copy__name text-white text-5xl sm:text-4xl md:text-5xl xl:text-7xl whitespace-nowrap">
-        <span class="text-cyan-400">me llamo</span> Federico
-      </h2>
-      <div class="hero-copy__role text-3xl sm:text-4xl md:text-5xl xl:text-7xl">
-        <TypyingText />
+      <div class="hero-copy__stage" id="heroCopyStage">
+        <div class="hero-copy__primary" id="heroCopyPrimary">
+          <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
+          <h2 class="hero-copy__name text-white text-5xl sm:text-4xl md:text-5xl xl:text-7xl whitespace-nowrap">
+            <span class="text-cyan-400">me llamo</span> Federico
+          </h2>
+          <div class="hero-copy__role text-3xl sm:text-4xl md:text-5xl xl:text-7xl">
+            <TypyingText />
+          </div>
+        </div>
+        <div class="hero-copy__alt" id="heroCopyAlt">
+          <h2 class="hero-copy__alt-text text-white text-4xl sm:text-3xl md:text-4xl xl:text-6xl font-bold">
+            Construyendo tus ideas en <span class="text-cyan-400">soluciones</span>
+          </h2>
+        </div>
       </div>
       <div class="hero-copy__socials">
         <a href="https://codepen.io/NeroDovahkiin" class="social-icon" aria-label="codepen"><Icon name="mdi:codepen" class="size-10 text-white" /></a>
@@ -83,6 +92,26 @@ import TypyingText from "~/components/textTyping.astro";
     text-align: left;
     z-index: 5;
     color: #fff;
+  }
+
+  /* Both children of the stage occupy the same grid cell, so they overlay
+     each other exactly (the track sizes to the taller one) without either
+     needing a hardcoded height. They never overlap visually, though: the
+     scroll handler fully fades+slides the primary text out (opacity 0)
+     before the alt text starts fading+sliding in, so there's a brief gap
+     where neither is visible rather than a cross-dissolve. */
+  .hero-copy__stage {
+    display: grid;
+  }
+
+  .hero-copy__primary,
+  .hero-copy__alt {
+    grid-area: 1 / 1;
+    will-change: transform, opacity;
+  }
+
+  .hero-copy__alt {
+    opacity: 0;
   }
 
   .hero-copy h3 {
@@ -260,6 +289,9 @@ import TypyingText from "~/components/textTyping.astro";
   const ctx = canvas.getContext("2d")!;
   const heroScroll = document.getElementById("heroScroll")!;
   const scrollHint = document.getElementById("scrollHint")!;
+  const heroCopyStage = document.getElementById("heroCopyStage")!;
+  const heroCopyPrimary = document.getElementById("heroCopyPrimary")!;
+  const heroCopyAlt = document.getElementById("heroCopyAlt")!;
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -346,15 +378,49 @@ import TypyingText from "~/components/textTyping.astro";
     scrollDistance = Math.max(heroScroll.offsetHeight - window.innerHeight, 1);
   }
 
+  // The primary copy (3 lines) and the alt line (2 lines) sit in the same
+  // grid cell, so the stage's own height defaults to whichever is taller —
+  // that leaves a gap between the shorter alt text and the socials row
+  // below it. Animating the stage's height alongside the swap keeps the
+  // socials hugging whichever text is actually showing.
+  let heroCopyPrimaryHeight = 0;
+  let heroCopyAltHeight = 0;
+
+  function recomputeHeroCopyHeights() {
+    heroCopyPrimaryHeight = heroCopyPrimary.scrollHeight;
+    heroCopyAltHeight = heroCopyAlt.scrollHeight;
+  }
+
   // Fraction of the hero's total scroll distance over which the "Scroll"
   // hint fades out. Larger = it stays visible longer before disappearing.
   const SCROLL_HINT_FADE_DISTANCE = 0.6;
+
+  // The intro copy (name/role) swaps for the alt line at the midpoint of
+  // the hero's scroll, over a small window centered on it. The two halves
+  // of that window are sequential, not simultaneous: the primary text
+  // fully fades+slides out first, then the alt text fades+slides in — so
+  // there's a brief gap with neither visible instead of the two overlapping.
+  const TEXT_SWAP_CENTER = 0.5;
+  const TEXT_SWAP_RANGE = 0.3;
+  const TEXT_SWAP_TRAVEL_PX = 28;
 
   function onScroll() {
     const progress = clamp01(window.scrollY / scrollDistance);
 
     targetFrame = progress * (FRAME_COUNT - 1);
     scrollHint.style.opacity = String(1 - clamp01(progress / SCROLL_HINT_FADE_DISTANCE));
+
+    const swapT = clamp01((progress - (TEXT_SWAP_CENTER - TEXT_SWAP_RANGE / 2)) / TEXT_SWAP_RANGE);
+    const outT = clamp01(swapT * 2); // 0 -> 1 over the first half: primary exits
+    const inT = clamp01((swapT - 0.5) * 2); // 0 -> 1 over the second half: alt enters
+
+    heroCopyPrimary.style.opacity = String(1 - outT);
+    heroCopyPrimary.style.transform = `translateY(${outT * -TEXT_SWAP_TRAVEL_PX}px)`;
+
+    heroCopyAlt.style.opacity = String(inT);
+    heroCopyAlt.style.transform = `translateY(${(1 - inT) * TEXT_SWAP_TRAVEL_PX}px)`;
+
+    heroCopyStage.style.height = `${heroCopyPrimaryHeight + (heroCopyAltHeight - heroCopyPrimaryHeight) * swapT}px`;
   }
 
   function tick(now: number) {
@@ -394,11 +460,13 @@ import TypyingText from "~/components/textTyping.astro";
 
   resizeCanvas();
   recomputeScrollDistance();
+  recomputeHeroCopyHeights();
   preload();
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", () => {
     resizeCanvas();
     recomputeScrollDistance();
+    recomputeHeroCopyHeights();
     drawFrame(Math.round(smoothFrame));
   });
 
