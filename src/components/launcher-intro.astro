@@ -1,0 +1,96 @@
+---
+---
+
+<div class="launcher-overlay" id="launcherOverlay">
+  <iframe
+    id="launcherFrame"
+    class="launcher-frame"
+    data-src="/launcher.html"
+    title="Cargando"
+    allow="autoplay"
+  ></iframe>
+</div>
+
+<script is:inline>
+  (function () {
+    var KEY = "launcherShown";
+    var overlay = document.getElementById("launcherOverlay");
+    if (!overlay) return;
+
+    // A link opened in a new tab/window (right-click, ctrl/cmd-click, a
+    // target="_blank" demo link, etc.) gets its own sessionStorage that
+    // never saw the flag below, even though the visitor was already
+    // browsing the site. Treat "arrived here from another page on this
+    // same site" the same as "already shown" so the launcher doesn't
+    // replay in that new tab.
+    var cameFromSameSite = false;
+    try {
+      cameFromSameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch (e) {}
+
+    if (sessionStorage.getItem(KEY) || cameFromSameSite) {
+      // Not a fresh entry to the site — remove it outright, before it ever
+      // paints. Crucially, the iframe never gets a src in this branch, so
+      // launcher.html (and its audio) never loads at all.
+      sessionStorage.setItem(KEY, "1");
+      overlay.remove();
+      return;
+    }
+
+    sessionStorage.setItem(KEY, "1");
+    overlay.dataset.active = "true";
+    var frame = document.getElementById("launcherFrame");
+    if (frame) frame.src = frame.dataset.src;
+  })();
+</script>
+
+<style>
+  .launcher-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0b0d12;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  .launcher-overlay.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .launcher-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+</style>
+
+<script>
+  // Shows the launcher for at least MIN_DISPLAY_MS. If the page (images,
+  // hero frames, etc.) takes longer than that to finish loading, the
+  // launcher stays up until it's actually done, then hands off to the site.
+  const overlay = document.getElementById("launcherOverlay");
+  if (overlay && overlay.dataset.active === "true") {
+    const MIN_DISPLAY_MS = 4000;
+    const start = performance.now();
+
+    function hideOverlay() {
+      overlay.classList.add("is-hidden");
+      window.setTimeout(() => overlay.remove(), 450);
+    }
+
+    function finish() {
+      const elapsed = performance.now() - start;
+      const remaining = Math.max(MIN_DISPLAY_MS - elapsed, 0);
+      window.setTimeout(hideOverlay, remaining);
+    }
+
+    if (document.readyState === "complete") {
+      finish();
+    } else {
+      window.addEventListener("load", finish, { once: true });
+    }
+  }
+</script>

@@ -4,7 +4,7 @@ import TypyingText from "~/components/textTyping.astro";
 ---
 
 <section class="hero-scroll" id="heroScroll">
-  <div class="hero-sticky">
+  <div class="hero-sticky" id="heroSticky">
     <canvas id="heroCanvas"></canvas>
     <div class="hero-vignette"></div>
 
@@ -13,7 +13,7 @@ import TypyingText from "~/components/textTyping.astro";
       <h2 class="hero-copy__name text-white text-5xl sm:text-4xl md:text-5xl xl:text-7xl whitespace-nowrap">
         <span class="text-cyan-400">me llamo</span> Federico
       </h2>
-      <div class="hero-copy__role text-5xl sm:text-4xl md:text-5xl xl:text-7xl">
+      <div class="hero-copy__role text-3xl sm:text-4xl md:text-5xl xl:text-7xl">
         <TypyingText />
       </div>
       <div class="hero-copy__socials">
@@ -30,6 +30,9 @@ import TypyingText from "~/components/textTyping.astro";
     </div>
   </div>
 </section>
+
+<div class="hero-fx-layer" id="heroFxLayer" aria-hidden="true"></div>
+<div class="hero-cursor-tag" id="heroCursorTag" aria-hidden="true">{"{ }"}</div>
 
 <style>
   .hero-scroll {
@@ -171,6 +174,63 @@ import TypyingText from "~/components/textTyping.astro";
       max-width: none;
     }
   }
+
+  .hero-fx-layer {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 45;
+  }
+
+  .hero-cursor-tag {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate3d(-9999px, -9999px, 0);
+    pointer-events: none;
+    z-index: 46;
+    font-family: "Fira Code", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    will-change: transform, opacity;
+  }
+
+  /* Desktop-only effect: hide on touch/coarse-pointer devices so it never
+     flashes or gets stuck visible from a mouse-emulated touch event. */
+  @media (hover: none), (pointer: coarse) {
+    .hero-fx-layer,
+    .hero-cursor-tag {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* These spans are created at runtime via document.createElement, so they
+     never receive Astro's scoped-style attribute — the rules for them have
+     to live in a global block or they'd silently no-op (position: static). */
+  .hero-fx-snippet {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: "Fira Code", "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: #67e8f9;
+    text-shadow: 0 0 8px rgba(103, 232, 249, 0.55);
+    opacity: 0.9;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: transform 1.2s ease-out, opacity 1.2s ease-out;
+    will-change: transform, opacity;
+  }
+
+  .hero-fx-snippet--float {
+    opacity: 0;
+    transform: translate(-50%, -220%);
+  }
 </style>
 
 <script>
@@ -267,11 +327,15 @@ import TypyingText from "~/components/textTyping.astro";
     scrollDistance = Math.max(heroScroll.offsetHeight - window.innerHeight, 1);
   }
 
+  // Fraction of the hero's total scroll distance over which the "Scroll"
+  // hint fades out. Larger = it stays visible longer before disappearing.
+  const SCROLL_HINT_FADE_DISTANCE = 0.6;
+
   function onScroll() {
     const progress = clamp01(window.scrollY / scrollDistance);
 
     targetFrame = progress * (FRAME_COUNT - 1);
-    scrollHint.style.opacity = String(1 - clamp01(progress / 0.05));
+    scrollHint.style.opacity = String(1 - clamp01(progress / SCROLL_HINT_FADE_DISTANCE));
   }
 
   function tick(now: number) {
@@ -330,4 +394,75 @@ import TypyingText from "~/components/textTyping.astro";
 
   onScroll();
   requestAnimationFrame(tick);
+
+  // Desktop-only "code cursor" effect: a small "{ }" tag tracks the mouse
+  // anywhere on the page, and code-like snippets spawn near it, float up
+  // and fade out. Gated on a real mouse (not just a wide viewport) so
+  // touch devices — including tablets wider than a typical desktop
+  // breakpoint — never trigger it. The layer/tag are position: fixed, so
+  // they render above the page regardless of scroll position.
+  const fxLayer = document.getElementById("heroFxLayer")!;
+  const cursorTag = document.getElementById("heroCursorTag")!;
+  const isDesktopPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  if (isDesktopPointer && !prefersReducedMotion) {
+    const SNIPPETS = [
+      "const x =",
+      "npm run dev",
+      "λ()",
+      "() => {}",
+      "git commit",
+      "async/await",
+      "return true;",
+      "<div/>",
+      "import React",
+      "0x1F",
+    ];
+    const SNIPPET_THROTTLE_MS = 60;
+    const SNIPPET_LIFETIME_MS = 800;
+    // Hard cap on concurrently-visible snippets, independent of how fast the
+    // mouse moves — without this, sweeping the mouse across the screen keeps
+    // spawning them along the whole path and the "tail" gets very long.
+    const MAX_ACTIVE_SNIPPETS = 6;
+    let lastSnippetSpawn = 0;
+    const activeSnippets: HTMLElement[] = [];
+
+    function spawnSnippet(x: number, y: number) {
+      const el = document.createElement("span");
+      el.className = "hero-fx-snippet";
+      el.textContent = SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)];
+      el.style.left = `${x + (Math.random() - 0.5) * 40}px`;
+      el.style.top = `${y}px`;
+      fxLayer.appendChild(el);
+      activeSnippets.push(el);
+
+      if (activeSnippets.length > MAX_ACTIVE_SNIPPETS) {
+        activeSnippets.shift()?.remove();
+      }
+
+      requestAnimationFrame(() => el.classList.add("hero-fx-snippet--float"));
+      window.setTimeout(() => {
+        el.remove();
+        const index = activeSnippets.indexOf(el);
+        if (index !== -1) activeSnippets.splice(index, 1);
+      }, SNIPPET_LIFETIME_MS);
+    }
+
+    document.addEventListener("mousemove", (event) => {
+      const x = event.clientX;
+      const y = event.clientY;
+
+      cursorTag.style.transform = `translate3d(${x + 14}px, ${y + 14}px, 0)`;
+      cursorTag.style.opacity = "1";
+
+      const now = performance.now();
+      if (now - lastSnippetSpawn < SNIPPET_THROTTLE_MS) return;
+      lastSnippetSpawn = now;
+      spawnSnippet(x, y);
+    });
+
+    document.addEventListener("mouseleave", () => {
+      cursorTag.style.opacity = "0";
+    });
+  }
 </script>
