@@ -68,29 +68,58 @@
 </style>
 
 <script>
-  // Shows the launcher for at least MIN_DISPLAY_MS. If the page (images,
-  // hero frames, etc.) takes longer than that to finish loading, the
-  // launcher stays up until it's actually done, then hands off to the site.
+  // Waits for two things before handing off to the site: (1) the terminal
+  // animation inside the iframe actually finishing (it posts a message when
+  // it does — its typing speed is randomized, so a fixed timer either cuts
+  // it off or leaves an awkward pause), and (2) the page (images, hero
+  // frames, etc.) finishing its own load. Whichever takes longer wins.
   const overlay = document.getElementById("launcherOverlay");
-  if (overlay && overlay.dataset.active === "true") {
-    const MIN_DISPLAY_MS = 4000;
-    const start = performance.now();
+  const frame = document.getElementById("launcherFrame") as HTMLIFrameElement | null;
+  if (overlay && frame && overlay.dataset.active === "true") {
+    // Safety net: if the completion message is ever lost (e.g. an error
+    // inside the iframe), don't leave the launcher stuck forever.
+    const MAX_WAIT_MS = 9000;
+
+    let pageLoaded = document.readyState === "complete";
+    let animationDone = false;
+    let finished = false;
 
     function hideOverlay() {
+      if (finished) return;
+      finished = true;
       overlay.classList.add("is-hidden");
       window.setTimeout(() => overlay.remove(), 450);
     }
 
-    function finish() {
-      const elapsed = performance.now() - start;
-      const remaining = Math.max(MIN_DISPLAY_MS - elapsed, 0);
-      window.setTimeout(hideOverlay, remaining);
+    function maybeFinish() {
+      if (pageLoaded && animationDone) hideOverlay();
     }
 
-    if (document.readyState === "complete") {
-      finish();
-    } else {
-      window.addEventListener("load", finish, { once: true });
+    if (!pageLoaded) {
+      window.addEventListener(
+        "load",
+        () => {
+          pageLoaded = true;
+          maybeFinish();
+        },
+        { once: true },
+      );
     }
+
+    window.addEventListener("message", (event) => {
+      if (
+        event.source === frame.contentWindow &&
+        event.data &&
+        event.data.source === "fguzzo-launcher" &&
+        event.data.type === "complete"
+      ) {
+        animationDone = true;
+        maybeFinish();
+      }
+    });
+
+    window.setTimeout(hideOverlay, MAX_WAIT_MS);
+
+    maybeFinish();
   }
 </script>
