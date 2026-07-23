@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 import TypyingText from "~/components/textTyping.astro";
 ---
 
@@ -8,12 +9,18 @@ import TypyingText from "~/components/textTyping.astro";
     <div class="hero-vignette"></div>
 
     <div class="hero-copy">
-      <h3 class="hero-copy__greeting">Bienvenid@!</h3>
-      <h2 class="hero-copy__name">
+      <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
+      <h2 class="hero-copy__name text-white text-5xl sm:text-4xl md:text-5xl xl:text-7xl whitespace-nowrap">
         <span class="text-cyan-400">me llamo</span> Federico
       </h2>
-      <div class="hero-copy__role">
+      <div class="hero-copy__role text-5xl sm:text-4xl md:text-5xl xl:text-7xl">
         <TypyingText />
+      </div>
+      <div class="hero-copy__socials">
+        <a href="https://codepen.io/NeroDovahkiin" class="social-icon" aria-label="codepen"><Icon name="mdi:codepen" class="size-10 text-white" /></a>
+        <a href="https://www.linkedin.com/in/federicogmenezes/" class="social-icon" aria-label="linkedin"><Icon name="mdi:linkedin" class="size-10 text-white" /></a>
+        <a href="https://www.instagram.com/nero_fgm/" class="social-icon" aria-label="instagram"><Icon name="mdi:instagram" class="size-10 text-white" /></a>
+        <a href="https://github.com/NeroDovahkiin" class="social-icon" aria-label="github"><Icon name="mdi:github" class="size-10 text-white" /></a>
       </div>
     </div>
 
@@ -68,29 +75,44 @@ import TypyingText from "~/components/textTyping.astro";
     right: 5%;
     top: 50%;
     transform: translateY(-50%);
-    max-width: 640px;
-    margin: 0 auto;
-    text-align: center;
+    max-width: 900px;
+    text-align: left;
     z-index: 5;
     color: #fff;
   }
 
-  .hero-copy__greeting {
-    font-size: clamp(1.75rem, 4vw, 3rem);
+  .hero-copy h3 {
+    margin: 0 0 4px;
     font-weight: 700;
-    margin: 0 0 12px;
   }
 
   .hero-copy__name {
-    font-size: clamp(1.5rem, 3.4vw, 2.5rem);
-    font-weight: 600;
-    margin: 0 0 18px;
+    margin: 0 0 12px;
+    font-weight: 700;
   }
 
   .hero-copy__role {
+    font-weight: 700;
+  }
+
+  .hero-copy__socials {
     display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .social-icon {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    background-color: darkslategrey;
+    padding: 5px;
+    border-radius: 10px;
+    transition: opacity 0.2s ease;
+  }
+
+  .social-icon:hover {
+    opacity: 0.8;
   }
 
   .scroll-hint {
