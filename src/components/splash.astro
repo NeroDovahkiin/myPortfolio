@@ -7,6 +7,7 @@ import TypyingText from "~/components/textTyping.astro";
   <div class="hero-sticky" id="heroSticky">
     <canvas id="heroCanvas"></canvas>
     <div class="hero-vignette"></div>
+    <div class="hero-fx-layer-local" id="heroFxLayerLocal" aria-hidden="true"></div>
 
     <div class="hero-copy">
       <h3 class="text-white text-3xl md:text-3xl xl:text-5xl">Bienvenid@!</h3>
@@ -180,7 +181,24 @@ import TypyingText from "~/components/textTyping.astro";
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 45;
+    /* Negative so it paints behind normal page content (text, images) —
+       CSS stacking order puts negative z-index below in-flow content but
+       still above the page's own background. */
+    z-index: -1;
+  }
+
+  /* Mirrors .hero-fx-layer, but lives inside .hero-sticky (between the
+     canvas/vignette and .hero-copy in DOM order) so it can sit above the
+     hero's own background image while staying below the hero text. A
+     fixed-position layer outside the hero can't do that: .hero-sticky
+     forms its own stacking context, so an external sibling is either
+     entirely above or entirely below the whole thing, never threaded
+     between its background and its text. */
+  .hero-fx-layer-local {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
   }
 
   .hero-cursor-tag {
@@ -203,6 +221,7 @@ import TypyingText from "~/components/textTyping.astro";
      flashes or gets stuck visible from a mouse-emulated touch event. */
   @media (hover: none), (pointer: coarse) {
     .hero-fx-layer,
+    .hero-fx-layer-local,
     .hero-cursor-tag {
       display: none;
     }
@@ -402,7 +421,9 @@ import TypyingText from "~/components/textTyping.astro";
   // breakpoint — never trigger it. The layer/tag are position: fixed, so
   // they render above the page regardless of scroll position.
   const fxLayer = document.getElementById("heroFxLayer")!;
+  const fxLayerLocal = document.getElementById("heroFxLayerLocal")!;
   const cursorTag = document.getElementById("heroCursorTag")!;
+  const heroStickyEl = document.getElementById("heroSticky")!;
   const isDesktopPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   if (isDesktopPointer && !prefersReducedMotion) {
@@ -428,12 +449,23 @@ import TypyingText from "~/components/textTyping.astro";
     const activeSnippets: HTMLElement[] = [];
 
     function spawnSnippet(x: number, y: number) {
+      // While the cursor is over the hero, spawn into its local layer
+      // (sandwiched between the background and the hero text in DOM order)
+      // instead of the page-wide fixed one, so it can sit above the hero's
+      // background image without also sitting above the hero text.
+      const heroRect = heroStickyEl.getBoundingClientRect();
+      const withinHero =
+        x >= heroRect.left && x <= heroRect.right && y >= heroRect.top && y <= heroRect.bottom;
+      const targetLayer = withinHero ? fxLayerLocal : fxLayer;
+      const localX = withinHero ? x - heroRect.left : x;
+      const localY = withinHero ? y - heroRect.top : y;
+
       const el = document.createElement("span");
       el.className = "hero-fx-snippet";
       el.textContent = SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)];
-      el.style.left = `${x + (Math.random() - 0.5) * 40}px`;
-      el.style.top = `${y}px`;
-      fxLayer.appendChild(el);
+      el.style.left = `${localX + (Math.random() - 0.5) * 40}px`;
+      el.style.top = `${localY}px`;
+      targetLayer.appendChild(el);
       activeSnippets.push(el);
 
       if (activeSnippets.length > MAX_ACTIVE_SNIPPETS) {
@@ -451,6 +483,20 @@ import TypyingText from "~/components/textTyping.astro";
     document.addEventListener("mousemove", (event) => {
       const x = event.clientX;
       const y = event.clientY;
+
+      // Hovering anything the site itself renders with a pointer cursor
+      // (buttons, links, clickable cards, ...) hides the whole effect
+      // instantly, so it never sits on top of something clickable. It
+      // reappears the moment the cursor moves off that element.
+      const target = event.target as Element | null;
+      const isOverClickable = !!target && getComputedStyle(target).cursor === "pointer";
+
+      if (isOverClickable) {
+        cursorTag.style.opacity = "0";
+        for (const el of activeSnippets) el.remove();
+        activeSnippets.length = 0;
+        return;
+      }
 
       cursorTag.style.transform = `translate3d(${x + 14}px, ${y + 14}px, 0)`;
       cursorTag.style.opacity = "1";
