@@ -113,13 +113,12 @@ Toast.fire({
         <div class="flex flex-col items-center md:items-start">
             <h1 class="text-4xl font-bold text-white">Ponte en contacto</h1>
             <p class="text-sm text-gray-300 mt-4 leading-relaxed px-10 md:px-0">¿Tienes una gran idea o marca para desarrollar y necesitas ayuda? Ponte en contacto conmigo. Me encantaría conocer tu proyecto y brindarte ayuda.</p>
-            <br>
             <img
-                    src="./imgProgramming.webp"
-                    class="h-auto max-w-80 rounded-lg shadow-none"
-                    alt="imagen programando"
+                    src="/astronaut.png"
+                    class="h-auto max-w-80 contact-astronaut mt-10"
+                    alt="ilustración de desarrollador"
                 />
-            <ul class="mt-12 space-y-8">
+            <ul class="mt-4 space-y-8">
                 <li class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill='#fff'
                         viewBox="0 0 479.058 479.058">
@@ -143,7 +142,7 @@ Toast.fire({
   
         </div>
 
-        <div class="bg-gray-100 p-6 rounded-lg">
+        <div class="bg-gray-200 p-6 rounded-lg">
 
             <form id="contactForm" class="mt-8">
                 <div class="contWrapper">
@@ -195,5 +194,25 @@ Toast.fire({
 
   .contWrapper{
     min-height: 90px;
+  }
+
+  .contact-astronaut {
+    transform: scaleX(-1);
+    animation: contact-astronaut-float 4s ease-in-out infinite;
+  }
+
+  @keyframes contact-astronaut-float {
+    0%, 100% {
+      transform: scaleX(-1) translateY(0);
+    }
+    50% {
+      transform: scaleX(-1) translateY(-14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-astronaut {
+      animation: none;
+    }
   }
 </style>
