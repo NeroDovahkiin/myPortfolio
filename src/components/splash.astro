@@ -22,7 +22,7 @@ import TypyingText from "~/components/textTyping.astro";
         </div>
         <div class="hero-copy__alt" id="heroCopyAlt">
           <h2 class="hero-copy__alt-text text-white text-4xl sm:text-3xl md:text-4xl xl:text-6xl font-bold">
-            Construyendo tus ideas en <span class="text-cyan-400">soluciones</span>
+            Transformando tus ideas en <span class="text-cyan-400">soluciones</span>
           </h2>
         </div>
       </div>
@@ -33,6 +33,10 @@ import TypyingText from "~/components/textTyping.astro";
         <a href="https://github.com/NeroDovahkiin" class="social-icon" aria-label="github"><Icon name="mdi:github" class="size-10 text-white" /></a>
       </div>
     </div>
+
+    <button type="button" class="hero-skip-btn" id="heroSkipBtn">
+      Cancelar animación
+    </button>
 
     <div class="scroll-hint" id="scrollHint" aria-hidden="true">
       <span>Scroll</span>
@@ -53,12 +57,51 @@ import TypyingText from "~/components/textTyping.astro";
     background: #000;
   }
 
+  /* Applied once the "Cancelar animación" button is used: collapses the
+     500vh scroll-scrub zone back down to a normal, single-viewport hero so
+     the rest of the page scrolls immediately below it instead of through
+     the (now frozen) frame sequence. */
+  .hero-scroll--static {
+    height: 100vh;
+  }
+
   .hero-sticky {
     position: sticky;
     top: 0;
     height: 100vh;
     overflow: hidden;
     background: #000 url("/hero-frames/001.webp") center / cover no-repeat;
+  }
+
+  /* Sits in the exact spot the scroll hint vacates (see .scroll-hint below)
+     — hidden and non-interactive until the hint has fully faded out, at
+     which point the script cross-fades this in over the same spot instead
+     of both being visible/clickable at once. */
+  .hero-skip-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translateX(-50%);
+    z-index: 6;
+    opacity: 0;
+    pointer-events: none;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: opacity 0.3s ease, background 0.2s ease;
+  }
+
+  .hero-skip-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
   }
 
   #heroCanvas {
@@ -162,6 +205,10 @@ import TypyingText from "~/components/textTyping.astro";
     letter-spacing: 0.14em;
     text-transform: uppercase;
     z-index: 5;
+    /* Purely decorative (aria-hidden) — without this, it stays hit-testable
+       even at opacity 0 and would swallow clicks meant for the "Cancelar
+       animación" button that fades in over this same spot. */
+    pointer-events: none;
     transition: opacity 0.3s ease;
   }
   .scroll-hint__mouse {
@@ -292,6 +339,7 @@ import TypyingText from "~/components/textTyping.astro";
   const heroCopyStage = document.getElementById("heroCopyStage")!;
   const heroCopyPrimary = document.getElementById("heroCopyPrimary")!;
   const heroCopyAlt = document.getElementById("heroCopyAlt")!;
+  const heroSkipBtn = document.getElementById("heroSkipBtn")!;
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -306,6 +354,7 @@ import TypyingText from "~/components/textTyping.astro";
   let smoothFrame = 0; // frame actually rendered, spring-driven toward targetFrame
   let frameVelocity = 0; // current speed of smoothFrame, in frames/second
   let lastTick = 0;
+  let rafId = 0; // id of the in-flight tick() rAF, so it can be cancelled
 
   // Damped-spring constants: smoothFrame chases targetFrame instead of
   // jumping to it. Damping is deliberately a bit below the critical point
@@ -395,6 +444,12 @@ import TypyingText from "~/components/textTyping.astro";
   // hint fades out. Larger = it stays visible longer before disappearing.
   const SCROLL_HINT_FADE_DISTANCE = 0.6;
 
+  // The "Cancelar animación" button occupies the same spot the scroll hint
+  // just vacated, so it only starts fading in once the hint has fully
+  // disappeared — over this further stretch of scroll progress — instead of
+  // both being visible (and clickable) on top of each other.
+  const SKIP_BTN_FADE_DISTANCE = 0.15;
+
   // The intro copy (name/role) swaps for the alt line at the midpoint of
   // the hero's scroll, over a small window centered on it. The two halves
   // of that window are sequential, not simultaneous: the primary text
@@ -409,6 +464,10 @@ import TypyingText from "~/components/textTyping.astro";
 
     targetFrame = progress * (FRAME_COUNT - 1);
     scrollHint.style.opacity = String(1 - clamp01(progress / SCROLL_HINT_FADE_DISTANCE));
+
+    const skipBtnT = clamp01((progress - SCROLL_HINT_FADE_DISTANCE) / SKIP_BTN_FADE_DISTANCE);
+    heroSkipBtn.style.opacity = String(skipBtnT);
+    heroSkipBtn.style.pointerEvents = skipBtnT > 0 ? "auto" : "none";
 
     const swapT = clamp01((progress - (TEXT_SWAP_CENTER - TEXT_SWAP_RANGE / 2)) / TEXT_SWAP_RANGE);
     const outT = clamp01(swapT * 2); // 0 -> 1 over the first half: primary exits
@@ -445,7 +504,7 @@ import TypyingText from "~/components/textTyping.astro";
     const index = clampIndex(Math.round(smoothFrame));
     if (index !== renderedFrame) drawFrame(index);
 
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
   }
 
   function preload() {
@@ -479,8 +538,69 @@ import TypyingText from "~/components/textTyping.astro";
     drawFrame(0);
   });
 
+  // "Cancelar animación" / "Habilitar animación": a toggle. Cancelling stops
+  // the scroll-driven frame sequence for good and collapses the hero back
+  // into a normal 100vh section, so the page reads as a static hero
+  // followed by regular scrolling — no more 500vh scrub zone to animate
+  // through. Re-enabling puts everything back exactly as it was on a fresh
+  // page load (frame 0, scrolled to top) rather than trying to resume from
+  // wherever the frame sequence was cut off — simpler, and scrolling back
+  // down to where you were plays the same sequence anyway.
+  let animationDisabled = false;
+
+  function setAnimationDisabled(disabled: boolean) {
+    animationDisabled = disabled;
+
+    targetFrame = 0;
+    smoothFrame = 0;
+    frameVelocity = 0;
+    drawFrame(0);
+
+    if (window.scrollY > 0) window.scrollTo(0, 0);
+
+    if (disabled) {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafId);
+
+      heroCopyPrimary.style.opacity = "1";
+      heroCopyPrimary.style.transform = "translateY(0)";
+      heroCopyAlt.style.opacity = "0";
+      heroCopyAlt.style.transform = `translateY(${TEXT_SWAP_TRAVEL_PX}px)`;
+      heroCopyStage.style.height = "";
+
+      scrollHint.style.opacity = "0";
+
+      // No more scroll to fade it in/out via onScroll — hold it fully
+      // visible and interactive so it can be toggled back.
+      heroSkipBtn.textContent = "Habilitar animación";
+      heroSkipBtn.style.opacity = "1";
+      heroSkipBtn.style.pointerEvents = "auto";
+
+      heroScroll.classList.add("hero-scroll--static");
+    } else {
+      heroScroll.classList.remove("hero-scroll--static");
+
+      heroSkipBtn.textContent = "Cancelar animación";
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      rafId = requestAnimationFrame(tick);
+
+      recomputeScrollDistance();
+      // Restores the fresh-load state: hint fully visible, this button
+      // hidden again until the hint fades out on its own.
+      onScroll();
+    }
+
+    // The header derives its "pinned to the hero's bottom" offset from the
+    // hero's scroll height on resize only — nudge it now that the hero's
+    // real height just changed underneath it.
+    window.dispatchEvent(new Event("resize"));
+  }
+
+  heroSkipBtn.addEventListener("click", () => setAnimationDisabled(!animationDisabled));
+
   onScroll();
-  requestAnimationFrame(tick);
+  rafId = requestAnimationFrame(tick);
 
   // Desktop-only "code cursor" effect: a small "{ }" tag tracks the mouse
   // anywhere on the page, and code-like snippets spawn near it, float up
