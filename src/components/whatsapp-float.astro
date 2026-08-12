@@ -2,45 +2,268 @@
 import { Icon } from "astro-icon/components";
 import { SITE } from "~/config";
 
-const message = "¡Hola! Vi tu portfolio y me gustaría contactarte.";
-const whatsappUrl = `https://api.whatsapp.com/send/?phone=${SITE.whatsapp.number}&text=${encodeURIComponent(message)}`;
+const defaultMessage = "¡Hola! Vi tu portfolio y me gustaría contactarte.";
 ---
 
-<a
-  id="whatsappFloat"
-  href={whatsappUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Enviar mensaje por WhatsApp"
-  class="whatsapp-float fixed bottom-6 left-6 z-40 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:brightness-110"
->
-  <Icon name="mdi:whatsapp" class="size-8" />
-</a>
+<div id="whatsappWidget" class="whatsapp-widget fixed bottom-6 left-6 z-40">
+  <button
+    id="whatsappToggle"
+    type="button"
+    aria-label="Abrir chat de WhatsApp"
+    aria-expanded="false"
+    aria-controls="whatsappPanel"
+    class="whatsapp-float flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:brightness-110"
+  >
+    <Icon name="mdi:whatsapp" class="whatsapp-icon size-8" />
+    <Icon name="mdi:close" class="whatsapp-icon-close size-7" />
+  </button>
+
+  <div id="whatsappPanel" class="whatsapp-panel" role="dialog" aria-labelledby="whatsappPanelTitle" hidden>
+    <div class="whatsapp-panel-header">
+      <div class="whatsapp-panel-avatar">
+        <Icon name="mdi:whatsapp" class="size-6" />
+      </div>
+      <div class="whatsapp-panel-heading">
+        <p id="whatsappPanelTitle">fGuzzoDev</p>
+      </div>
+      <button id="whatsappClose" type="button" aria-label="Cerrar chat">
+        <Icon name="mdi:close" class="size-5" />
+      </button>
+    </div>
+
+    <div class="whatsapp-panel-body">
+      <div class="whatsapp-bubble">¡Hola! 👋 Escribime tu mensaje y le dale enviar cuando quieras.</div>
+    </div>
+
+    <div class="whatsapp-panel-footer">
+      <textarea
+        id="whatsappMessage"
+        rows="4"
+        aria-label="Mensaje para enviar por WhatsApp"
+      >{defaultMessage}</textarea>
+      <button id="whatsappSend" type="button" aria-label="Enviar mensaje por WhatsApp" class="whatsapp-send">
+        <Icon name="mdi:send" class="size-5" />
+      </button>
+    </div>
+  </div>
+</div>
 
 <style>
+  .whatsapp-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .whatsapp-float {
+    order: 2;
     opacity: 0;
     transform: translateY(12px);
     pointer-events: none;
+    position: relative;
   }
-  .whatsapp-float.is-visible {
+  .whatsapp-widget.is-visible .whatsapp-float {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
   }
+
+  .whatsapp-icon-close {
+    display: none;
+  }
+  .whatsapp-widget.is-open .whatsapp-icon {
+    display: none;
+  }
+  .whatsapp-widget.is-open .whatsapp-icon-close {
+    display: block;
+  }
+
+  .whatsapp-panel {
+    order: 1;
+    margin-bottom: 0.75rem;
+    width: min(320px, calc(100vw - 3rem));
+    background: #fff;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    transform-origin: bottom left;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  .whatsapp-widget.is-open .whatsapp-panel {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  .whatsapp-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: #075e54;
+    color: #fff;
+    padding: 0.75rem 0.85rem;
+  }
+  .whatsapp-panel-avatar {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    background: #25d366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .whatsapp-panel-heading {
+    flex: 1;
+    min-width: 0;
+  }
+  .whatsapp-panel-heading p {
+    margin: 0;
+    line-height: 1.25;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  #whatsappClose {
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    padding: 0.25rem;
+    border-radius: 999px;
+    transition: background 0.15s ease;
+  }
+  #whatsappClose:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .whatsapp-panel-body {
+    background: #e5ddd5;
+    padding: 0.9rem;
+  }
+  .whatsapp-bubble {
+    background: #fff;
+    color: #111b21;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0 0.6rem 0.6rem 0.6rem;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+    max-width: 90%;
+  }
+
+  .whatsapp-panel-footer {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    background: #fff;
+    border-top: 1px solid #eee;
+  }
+  #whatsappMessage {
+    flex: 1;
+    resize: none;
+    border: 1px solid #d7d7d7;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    font-family: inherit;
+    color: #111b21;
+    background: #f7f7f7;
+    outline: none;
+  }
+  #whatsappMessage:focus {
+    border-color: #25d366;
+  }
+  .whatsapp-send {
+    flex-shrink: 0;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 999px;
+    background: #25d366;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.15s ease;
+  }
+  .whatsapp-send:hover {
+    filter: brightness(1.08);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .whatsapp-panel {
+      transition: none;
+    }
+  }
 </style>
 
-<script>
-  const btn = document.getElementById("whatsappFloat");
+<script define:vars={{ phone: SITE.whatsapp.number }}>
+  const widget = document.getElementById("whatsappWidget");
+  const toggle = document.getElementById("whatsappToggle");
+  const panel = document.getElementById("whatsappPanel");
+  const closeBtn = document.getElementById("whatsappClose");
+  const sendBtn = document.getElementById("whatsappSend");
+  const textarea = document.getElementById("whatsappMessage");
   const trigger = document.getElementById("conocimientos");
 
-  if (btn && trigger) {
+  function openPanel() {
+    widget.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+    panel.hidden = false;
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+  }
+
+  function closePanel({ returnFocus = false } = {}) {
+    widget.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    panel.hidden = true;
+    if (returnFocus) toggle.focus();
+  }
+
+  toggle.addEventListener("click", () => {
+    if (widget.classList.contains("is-open")) {
+      closePanel();
+    } else {
+      openPanel();
+    }
+  });
+
+  closeBtn.addEventListener("click", () => closePanel({ returnFocus: true }));
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && widget.classList.contains("is-open")) {
+      closePanel({ returnFocus: true });
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!widget.classList.contains("is-open")) return;
+    if (widget.contains(e.target)) return;
+    closePanel();
+  });
+
+  sendBtn.addEventListener("click", () => {
+    const message = textarea.value.trim();
+    const query = message ? `&text=${encodeURIComponent(message)}` : "";
+    window.open(`https://api.whatsapp.com/send/?phone=${phone}${query}`, "_blank", "noopener,noreferrer");
+    closePanel();
+  });
+
+  if (widget && trigger) {
     // Once the "Conocimientos" section has been reached (entering the
-    // viewport, or already scrolled past it) the button stays visible;
+    // viewport, or already scrolled past it) the widget stays visible;
     // scrolling back up above it hides it again.
     const observer = new IntersectionObserver(([entry]) => {
       const pastTrigger = entry.isIntersecting || entry.boundingClientRect.top < 0;
-      btn.classList.toggle("is-visible", pastTrigger);
+      widget.classList.toggle("is-visible", pastTrigger);
+      if (!pastTrigger) closePanel();
     });
     observer.observe(trigger);
   }

@@ -73,18 +73,14 @@ import TypyingText from "~/components/textTyping.astro";
     background: #000 url("/hero-frames/001.webp") center / cover no-repeat;
   }
 
-  /* Sits in the exact spot the scroll hint vacates (see .scroll-hint below)
-     — hidden and non-interactive until the hint has fully faded out, at
-     which point the script cross-fades this in over the same spot instead
-     of both being visible/clickable at once. */
+  /* Visible and clickable from first paint, always at this same spot —
+     unlike .scroll-hint above it, its visibility isn't tied to scroll. */
   .hero-skip-btn {
     position: absolute;
     left: 50%;
     bottom: 36px;
     transform: translateX(-50%);
     z-index: 6;
-    opacity: 0;
-    pointer-events: none;
     padding: 8px 16px;
     font-size: 11px;
     font-weight: 600;
@@ -97,7 +93,7 @@ import TypyingText from "~/components/textTyping.astro";
     border-radius: 999px;
     backdrop-filter: blur(6px);
     cursor: pointer;
-    transition: opacity 0.3s ease, background 0.2s ease;
+    transition: background 0.2s ease;
   }
 
   .hero-skip-btn:hover {
@@ -194,7 +190,7 @@ import TypyingText from "~/components/textTyping.astro";
   .scroll-hint {
     position: absolute;
     left: 50%;
-    bottom: 36px;
+    bottom: 96px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -205,9 +201,7 @@ import TypyingText from "~/components/textTyping.astro";
     letter-spacing: 0.14em;
     text-transform: uppercase;
     z-index: 5;
-    /* Purely decorative (aria-hidden) — without this, it stays hit-testable
-       even at opacity 0 and would swallow clicks meant for the "Cancelar
-       animación" button that fades in over this same spot. */
+    /* Purely decorative — fades out with scroll progress via JS. */
     pointer-events: none;
     transition: opacity 0.3s ease;
   }
@@ -444,12 +438,6 @@ import TypyingText from "~/components/textTyping.astro";
   // hint fades out. Larger = it stays visible longer before disappearing.
   const SCROLL_HINT_FADE_DISTANCE = 0.6;
 
-  // The "Cancelar animación" button occupies the same spot the scroll hint
-  // just vacated, so it only starts fading in once the hint has fully
-  // disappeared — over this further stretch of scroll progress — instead of
-  // both being visible (and clickable) on top of each other.
-  const SKIP_BTN_FADE_DISTANCE = 0.15;
-
   // The intro copy (name/role) swaps for the alt line at the midpoint of
   // the hero's scroll, over a small window centered on it. The two halves
   // of that window are sequential, not simultaneous: the primary text
@@ -464,10 +452,6 @@ import TypyingText from "~/components/textTyping.astro";
 
     targetFrame = progress * (FRAME_COUNT - 1);
     scrollHint.style.opacity = String(1 - clamp01(progress / SCROLL_HINT_FADE_DISTANCE));
-
-    const skipBtnT = clamp01((progress - SCROLL_HINT_FADE_DISTANCE) / SKIP_BTN_FADE_DISTANCE);
-    heroSkipBtn.style.opacity = String(skipBtnT);
-    heroSkipBtn.style.pointerEvents = skipBtnT > 0 ? "auto" : "none";
 
     const swapT = clamp01((progress - (TEXT_SWAP_CENTER - TEXT_SWAP_RANGE / 2)) / TEXT_SWAP_RANGE);
     const outT = clamp01(swapT * 2); // 0 -> 1 over the first half: primary exits
@@ -569,12 +553,7 @@ import TypyingText from "~/components/textTyping.astro";
       heroCopyStage.style.height = "";
 
       scrollHint.style.opacity = "0";
-
-      // No more scroll to fade it in/out via onScroll — hold it fully
-      // visible and interactive so it can be toggled back.
       heroSkipBtn.textContent = "Habilitar animación";
-      heroSkipBtn.style.opacity = "1";
-      heroSkipBtn.style.pointerEvents = "auto";
 
       heroScroll.classList.add("hero-scroll--static");
     } else {
@@ -586,8 +565,7 @@ import TypyingText from "~/components/textTyping.astro";
       rafId = requestAnimationFrame(tick);
 
       recomputeScrollDistance();
-      // Restores the fresh-load state: hint fully visible, this button
-      // hidden again until the hint fades out on its own.
+      // Restores the fresh-load state: hint fully visible.
       onScroll();
     }
 
