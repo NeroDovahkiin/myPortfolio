@@ -1,11 +1,11 @@
 ---
-import { getCollection } from "astro:content";
+import { getAllProjects } from "~/lib/blob-projects";
 import ContentSection from "~/components/content-section.astro";
 
-const allEntries = await getCollection("showcase");
+const allEntries = await getAllProjects();
 const proyectos = allEntries
-  .filter((e) => e.data.section === "vibecoding")
-  .sort((a, b) => (a.data.featured ?? 99) - (b.data.featured ?? 99));
+  .filter((e) => e.section === "vibecoding")
+  .sort((a, b) => (a.featured ?? 99) - (b.featured ?? 99));
 ---
 
 <ContentSection title="Vibecoding" id="vibecoding" display="display:none">
@@ -20,14 +20,14 @@ const proyectos = allEntries
     <div class="flex flex-wrap justify-center gap-5">
       {proyectos.map((entry) => (
         <a
-          href={entry.data.url}
+          href={entry.url}
           class="group block w-72 shrink-0 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-gray-900 outline-none no-underline"
         >
           <figure class="relative h-64 overflow-hidden">
             <img
               class="block w-full h-full object-scale-down transition-transform duration-500 group-hover:scale-105"
-              src={entry.data.image}
-              alt={entry.data.title}
+              src={entry.image}
+              alt={entry.title}
               loading="lazy"
               decoding="async"
             />
@@ -39,11 +39,11 @@ const proyectos = allEntries
             </div>
           </figure>
           <div class="px-4 py-3">
-            <h3 class="text-white font-bold text-base">{entry.data.title}</h3>
-            <p class="text-gray-400 text-sm mt-1 line-clamp-2">{entry.data.description?.[0] ?? ""}</p>
-            {entry.data.technologies && entry.data.technologies.length > 0 && (
+            <h3 class="text-white font-bold text-base">{entry.title}</h3>
+            <p class="text-gray-400 text-sm mt-1 line-clamp-2">{entry.description?.[0] ?? ""}</p>
+            {entry.technologies && entry.technologies.length > 0 && (
               <div class="flex flex-wrap gap-1 mt-2">
-                {entry.data.technologies.slice(0, 3).map((tech) => (
+                {entry.technologies.slice(0, 3).map((tech) => (
                   <span class="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded-full">{tech}</span>
                 ))}
               </div>

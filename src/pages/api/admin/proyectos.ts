@@ -1,53 +1,43 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { readFile, writeFile, unlink } from "node:fs/promises";
-import { join } from "node:path";
+import { createProject, updateProject, deleteProject } from "~/lib/blob-projects";
 
-const SHOWCASE_DIR = join(process.cwd(), "src", "content", "showcase");
-
-function slugPath(slug: string) {
-  // Prevent path traversal
-  const safe = slug.replace(/[^a-zA-Z0-9\-_]/g, "");
-  return join(SHOWCASE_DIR, `${safe}.json`);
+function safeSlug(slug: string) {
+  return String(slug).replace(/[^a-zA-Z0-9\-_]/g, "");
 }
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { slug, ...data } = body;
-    if (!slug || !data.title) {
+    const { slug: rawSlug, ...data } = body;
+    if (!rawSlug || !data.title) {
       return new Response(JSON.stringify({ error: "slug y title son obligatorios" }), { status: 400 });
     }
-    // url defaults to slug if not set
+    const slug = safeSlug(rawSlug);
     if (!data.url) data.url = slug;
-    const path = slugPath(slug);
-    // Check if already exists
-    try {
-      await readFile(path);
-      return new Response(JSON.stringify({ error: "Ya existe un proyecto con ese slug" }), { status: 409 });
-    } catch {
-      // doesn't exist, we can create
-    }
-    await writeFile(path, JSON.stringify(data, null, 2), "utf-8");
+    await createProject(slug, data);
     return new Response(JSON.stringify({ ok: true }), { status: 201 });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500 });
+    const message = e instanceof Error ? e.message : String(e);
+    const status = message.includes("Ya existe") ? 409 : 500;
+    return new Response(JSON.stringify({ error: message }), { status });
   }
 };
 
 export const PUT: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { slug, ...data } = body;
-    if (!slug || !data.title) {
+    const { slug: rawSlug, ...data } = body;
+    if (!rawSlug || !data.title) {
       return new Response(JSON.stringify({ error: "slug y title son obligatorios" }), { status: 400 });
     }
+    const slug = safeSlug(rawSlug);
     if (!data.url) data.url = slug;
-    const path = slugPath(slug);
-    await writeFile(path, JSON.stringify(data, null, 2), "utf-8");
+    await updateProject(slug, data);
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500 });
+    const message = e instanceof Error ? e.message : String(e);
+    return new Response(JSON.stringify({ error: message }), { status: 500 });
   }
 };
 
@@ -57,10 +47,10 @@ export const DELETE: APIRoute = async ({ url }) => {
     if (!slug) {
       return new Response(JSON.stringify({ error: "slug requerido" }), { status: 400 });
     }
-    const path = slugPath(slug);
-    await unlink(path);
+    await deleteProject(safeSlug(slug));
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500 });
+    const message = e instanceof Error ? e.message : String(e);
+    return new Response(JSON.stringify({ error: message }), { status: 500 });
   }
 };

@@ -1,0 +1,47 @@
+---
+import { Icon } from "astro-icon/components";
+import { SITE } from "~/config";
+
+const message = "¡Hola! Vi tu portfolio y me gustaría contactarte.";
+const whatsappUrl = `https://api.whatsapp.com/send/?phone=${SITE.whatsapp.number}&text=${encodeURIComponent(message)}`;
+---
+
+<a
+  id="whatsappFloat"
+  href={whatsappUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Enviar mensaje por WhatsApp"
+  class="whatsapp-float fixed bottom-6 left-6 z-40 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:brightness-110"
+>
+  <Icon name="mdi:whatsapp" class="size-8" />
+</a>
+
+<style>
+  .whatsapp-float {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+  }
+  .whatsapp-float.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById("whatsappFloat");
+  const trigger = document.getElementById("conocimientos");
+
+  if (btn && trigger) {
+    // Once the "Conocimientos" section has been reached (entering the
+    // viewport, or already scrolled past it) the button stays visible;
+    // scrolling back up above it hides it again.
+    const observer = new IntersectionObserver(([entry]) => {
+      const pastTrigger = entry.isIntersecting || entry.boundingClientRect.top < 0;
+      btn.classList.toggle("is-visible", pastTrigger);
+    });
+    observer.observe(trigger);
+  }
+</script>

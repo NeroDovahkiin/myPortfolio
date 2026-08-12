@@ -1,8 +1,8 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { mkdir, writeFile } from "node:fs/promises";
-import { join, extname, basename } from "node:path";
+import { extname, basename } from "node:path";
 import sharp from "sharp";
+import { put } from "@vercel/blob";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -25,22 +25,25 @@ export const POST: APIRoute = async ({ request }) => {
       .replace(/-+/g, "-")
       .toLowerCase();
 
-    const webpName = `${baseName}.webp`;
-    const dir = join(process.cwd(), "public", "proyectos", slug);
-    await mkdir(dir, { recursive: true });
-
     const inputBuffer = Buffer.from(await file.arrayBuffer());
-    const outputBuffer = await sharp(inputBuffer)
-      .webp({ quality: 85 })
-      .toBuffer();
+    // Siempre se convierte y optimiza a webp, sin importar el formato de origen
+    const outputBuffer = await sharp(inputBuffer).webp({ quality: 85 }).toBuffer();
 
-    await writeFile(join(dir, webpName), outputBuffer);
+    const blob = await put(`proyectos/${slug}/${baseName}.webp`, outputBuffer, {
+      access: "public",
+      // random suffix: evita servir una versión vieja cacheada en el CDN
+      // si se vuelve a subir un archivo con el mismo nombre
+      addRandomSuffix: true,
+      contentType: "image/webp",
+      token: import.meta.env.BLOB_READ_WRITE_TOKEN,
+    });
 
-    return new Response(
-      JSON.stringify({ path: `/proyectos/${slug}/${webpName}` }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ path: blob.url }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500 });
+    const message = e instanceof Error ? e.message : String(e);
+    return new Response(JSON.stringify({ error: message }), { status: 500 });
   }
 };

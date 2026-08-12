@@ -1,12 +1,12 @@
 ---
-import { getCollection } from "astro:content";
+import { getAllProjects } from "~/lib/blob-projects";
 import ContentSection from "~/components/content-section.astro";
 import ShowcaseCard from "~/components/proyectos-card.astro";
 
-const allEntries = await getCollection("showcase");
+const allEntries = await getAllProjects();
 const orderedSites = allEntries
-  .filter((e) => e.data.section === "proyectos" && "featured" in e.data)
-  .sort((a, b) => a.data.featured! - b.data.featured!);
+  .filter((e) => e.section === "proyectos" && "featured" in e)
+  .sort((a, b) => a.featured! - b.featured!);
 ---
 
 <ContentSection title="Proyectos" id="proyectos" display="display:none">

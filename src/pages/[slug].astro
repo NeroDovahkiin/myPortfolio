@@ -1,18 +1,16 @@
 ---
-import { getCollection } from "astro:content";
+export const prerender = false;
 import { Icon } from "astro-icon/components";
+import { getAllProjects } from "~/lib/blob-projects";
 
-export async function getStaticPaths() {
-  const entries = await getCollection("showcase");
-  return entries
-    .filter((e) => !e.data.specialPage)
-    .map((e) => ({
-      params: { slug: e.data.url },
-      props: { project: e.data },
-    }));
+const { slug } = Astro.params;
+const projects = await getAllProjects();
+const project = projects.find((p) => p.url === slug && !p.specialPage);
+
+if (!project) {
+  return new Response("Not found", { status: 404 });
 }
 
-const { project } = Astro.props;
 const hasGallery = project.images && project.images.length > 0;
 
 // Group description lines: consecutive "- " lines become a single bullet list block

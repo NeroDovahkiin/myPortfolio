@@ -1,20 +1,8 @@
 ---
 export const prerender = false;
-import { readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { getAllProjects } from "~/lib/blob-projects";
 
-const SHOWCASE_DIR = join(process.cwd(), "src", "content", "showcase");
-
-const files = (await readdir(SHOWCASE_DIR)).filter((f) => f.endsWith(".json"));
-
-const projects = await Promise.all(
-  files.map(async (file) => {
-    const slug = file.replace(".json", "");
-    const raw = await readFile(join(SHOWCASE_DIR, file), "utf-8");
-    const data = JSON.parse(raw);
-    return { slug, ...data };
-  })
-);
+const projects = await getAllProjects();
 
 const sections = {
   proyectos: projects.filter((p) => p.section === "proyectos").sort((a, b) => (a.featured ?? 99) - (b.featured ?? 99)),
