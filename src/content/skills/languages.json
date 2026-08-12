@@ -6,7 +6,7 @@
     { "title": "Java",       "icon": "languages/java-plain",  "url": "#" },
     { "title": "Python",     "icon": "languages/python",      "url": "https://www.python.org/" },
     { "title": "C#",         "icon": "languages/csharp",      "url": "#" },
-    { "title": "React",      "icon": "languages/react",       "url": "https://reactjs.org/" },
+    { "title": "Flutter",    "icon": "platforms/flutter",     "url": "https://flutter.dev/" },
     { "title": "MYSQL",      "icon": "languages/mysql",       "url": "#" }
   ]
 }
