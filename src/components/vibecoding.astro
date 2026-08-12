@@ -25,7 +25,8 @@ const proyectos = allEntries
         >
           <figure class="relative h-64 overflow-hidden">
             <img
-              class="block w-full h-full object-scale-down transition-transform duration-500 group-hover:scale-105"
+              class="block w-full h-full transition-transform duration-500 group-hover:scale-105"
+              style={{ objectFit: entry.imageFit ?? "scale-down" }}
               src={entry.image}
               alt={entry.title}
               loading="lazy"

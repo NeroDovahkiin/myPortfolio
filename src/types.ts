@@ -20,10 +20,13 @@ export interface ImgProyectoItem {
   src: string;
 }
 
+export type ImageFit = "cover" | "contain" | "fill" | "none" | "scale-down";
+
 export interface Project {
   slug: string;
   title: string;
   image?: string;
+  imageFit?: ImageFit;
   url: string;
   featured?: number;
   section?: "proyectos" | "conceptos" | "vibecoding";
@@ -33,5 +36,4 @@ export interface Project {
   images?: string[];
   demoUrl?: string;
   demoLabel?: string;
-  thumbsCount?: number;
 }

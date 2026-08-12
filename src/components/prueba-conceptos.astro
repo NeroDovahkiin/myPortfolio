@@ -22,7 +22,8 @@ const conceptos = allEntries
       >
         <figure class="relative h-64 overflow-hidden">
           <img
-            class="block w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            class="block w-full h-full transition-transform duration-500 group-hover:scale-105"
+            style={{ objectFit: entry.imageFit ?? "cover" }}
             src={entry.image}
             alt={entry.title}
             loading="lazy"

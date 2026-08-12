@@ -12,7 +12,8 @@ const techs = site.technologies?.slice(0, 3) ?? [];
 <a href={site.url} class="group block w-72 shrink-0 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-gray-900 outline-none no-underline">
   <figure class="relative aspect-video overflow-hidden">
     <img
-      class="block w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      class="block w-full h-full transition-transform duration-500 group-hover:scale-105"
+      style={{ objectFit: site.imageFit ?? "cover" }}
       src={site.image}
       alt={`Captura de ${site.title}`}
       loading="lazy"
