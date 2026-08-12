@@ -92,10 +92,11 @@ for (const line of project.description ?? []) {
           <div class="gallery">
             <div class="carousel">
               <div class="slides" id="slides">
-                {project.images!.map((src, i) => (
+                {project.images!.map((img, i) => (
                   <div class="slide">
                     <img
-                      src={src}
+                      src={img.src}
+                      style={{ objectFit: img.fit ?? "contain" }}
                       alt={`${project.title} — imagen ${i + 1}`}
                       loading={i === 0 ? "eager" : "lazy"}
                       decoding="async"

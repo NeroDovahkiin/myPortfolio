@@ -22,6 +22,11 @@ export interface ImgProyectoItem {
 
 export type ImageFit = "cover" | "contain" | "fill" | "none" | "scale-down";
 
+export interface GalleryImage {
+  src: string;
+  fit?: ImageFit;
+}
+
 export interface Project {
   slug: string;
   title: string;
@@ -33,7 +38,7 @@ export interface Project {
   specialPage?: boolean;
   description?: string[];
   technologies?: string[];
-  images?: string[];
+  images?: GalleryImage[];
   demoUrl?: string;
   demoLabel?: string;
 }

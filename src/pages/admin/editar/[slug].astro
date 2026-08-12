@@ -1,13 +1,14 @@
 ---
 export const prerender = false;
 import { getProjectBySlug } from "~/lib/blob-projects";
+import type { GalleryImage } from "~/types";
 
 const { slug } = Astro.params;
 const safeslug = (slug ?? "").replace(/[^a-zA-Z0-9\-_]/g, "");
 const project = await getProjectBySlug(safeslug);
 const notFound = !project;
 
-const existingImages: string[] = project?.images ?? [];
+const existingImages: GalleryImage[] = project?.images ?? [];
 const existingThumb: string = project?.image ?? "";
 ---
 
@@ -74,9 +75,9 @@ const existingThumb: string = project?.image ?? "";
                 onclick="document.getElementById('thumb-file').click()"
               >
                 {existingThumb ? (
-                  <img id="thumb-preview" src={existingThumb} alt="" class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+                  <img id="thumb-preview" src={existingThumb} alt="" class="absolute inset-0 w-full h-full rounded-lg" style={{ objectFit: project!.imageFit ?? "cover" }} />
                 ) : (
-                  <img id="thumb-preview" src="" alt="" class="hidden absolute inset-0 w-full h-full object-cover rounded-lg" />
+                  <img id="thumb-preview" src="" alt="" class="hidden absolute inset-0 w-full h-full rounded-lg" style={{ objectFit: project!.imageFit ?? "cover" }} />
                 )}
                 <div id="thumb-placeholder" class={`text-center p-2 ${existingThumb ? "hidden" : ""}`}>
                   <div class="text-2xl text-gray-600">+</div>
@@ -126,6 +127,20 @@ const existingThumb: string = project?.image ?? "";
             <input type="hidden" name="images" id="gallery-paths" />
           </div>
 
+          <!-- Gallery preview -->
+          <div>
+            <label class="label">Vista previa del carrusel</label>
+            <p class="text-xs text-gray-500 mb-2">Así se va a ver la galería en la página del proyecto.</p>
+            <div id="gallery-preview">
+              <div class="preview-carousel">
+                <div class="preview-slides" id="previewSlides"></div>
+                <button class="preview-arrow preview-arrow-prev" id="previewPrev" type="button" aria-label="Anterior">&#8592;</button>
+                <button class="preview-arrow preview-arrow-next" id="previewNext" type="button" aria-label="Siguiente">&#8594;</button>
+                <div class="preview-dots" id="previewDots"></div>
+              </div>
+            </div>
+          </div>
+
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="label">URL demo</label>
@@ -159,14 +174,42 @@ const existingThumb: string = project?.image ?? "";
       .gallery-placeholder { text-align: center; color: #4b5563; font-size: 0.875rem; padding: 0.5rem 0; cursor: pointer; }
       .gallery-placeholder.hidden { display: none; }
       .gallery-thumbs { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.25rem; }
+    </style>
+
+    <!--
+      Gallery tiles, the fit <select>, and the carousel preview slides/dots
+      are all built at runtime via document.createElement (see initGallery
+      in admin-gallery-client.ts and renderPreview() below). Astro's scoped
+      styles only ever reach elements present in this file's own template —
+      anything created client-side never gets the scoping attribute, so
+      those rules have to live here, unscoped, or they silently no-op.
+    -->
+    <style is:global>
+      @keyframes gallery-spin { to { transform: rotate(360deg); } }
+
       .gallery-tile { position: relative; flex: 0 0 auto; width: 9rem; height: 6.5rem; border-radius: 0.75rem; overflow: hidden; background: #1f2937; cursor: grab; border: 1px solid #374151; }
       .gallery-tile:active { cursor: grabbing; }
       .gallery-tile.dragging { opacity: 0.35; }
       .gallery-tile img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
       .gallery-handle { position: absolute; top: 0.25rem; left: 0.25rem; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.65rem; line-height: 1; padding: 0.2rem 0.3rem; border-radius: 0.35rem; letter-spacing: -1px; pointer-events: none; }
       .gallery-remove { position: absolute; top: 0.25rem; right: 0.25rem; width: 1.35rem; height: 1.35rem; background: rgba(0,0,0,0.7); color: #fff; border-radius: 999px; font-size: 0.8rem; line-height: 1; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; }
+      .gallery-fit-select { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; border: none; background: rgba(0,0,0,0.72); color: #fff; font-size: 0.65rem; line-height: 1.4; padding: 0.15rem 0.3rem; cursor: pointer; appearance: none; -webkit-appearance: none; text-align: center; text-align-last: center; }
+      .gallery-fit-select:focus { outline: 1px solid #818cf8; outline-offset: -1px; }
       .gallery-tile-loading { display: flex; align-items: center; justify-content: center; }
-      .gallery-spinner { width: 1.25rem; height: 1.25rem; border: 2px solid #818cf8; border-top-color: transparent; border-radius: 999px; animation: spin 0.7s linear infinite; }
+      .gallery-spinner { width: 1.25rem; height: 1.25rem; border: 2px solid #818cf8; border-top-color: transparent; border-radius: 999px; animation: gallery-spin 0.7s linear infinite; }
+
+      .preview-carousel { position: relative; border-radius: 0.75rem; overflow: hidden; background: #0d0d1a; border: 1px solid #374151; }
+      .preview-slides { display: flex; transition: transform 0.35s ease; }
+      .preview-slide { flex: 0 0 100%; width: 100%; min-height: 220px; max-height: 320px; display: flex; align-items: center; justify-content: center; background: #0d0d1a; }
+      .preview-slide img { display: block; width: 100%; height: 100%; max-height: 320px; }
+      .preview-empty-msg { color: #6b7280; font-size: 0.85rem; padding: 2rem; text-align: center; }
+      .preview-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 2.25rem; height: 2.25rem; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+      .preview-arrow:hover { background: rgba(0,0,0,0.85); }
+      .preview-arrow-prev { left: 0.6rem; }
+      .preview-arrow-next { right: 0.6rem; }
+      .preview-dots { position: absolute; bottom: 0.6rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.35rem; background: rgba(0,0,0,0.45); padding: 0.3rem 0.55rem; border-radius: 999px; }
+      .preview-dot { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: rgba(255,255,255,0.45); border: none; cursor: pointer; padding: 0; }
+      .preview-dot.active { background: #fff; }
     </style>
 
     <script>
@@ -211,6 +254,63 @@ const existingThumb: string = project?.image ?? "";
           }
         });
 
+        document.getElementById("thumb-fit")!.addEventListener("change", (e) => {
+          const preview = document.getElementById("thumb-preview") as HTMLImageElement;
+          preview.style.objectFit = (e.target as HTMLSelectElement).value;
+        });
+
+        // Gallery carousel preview — mirrors the carousel markup/behavior
+        // used on the actual project page ([slug].astro), driven live by
+        // whatever's currently in the gallery editor (before saving).
+        const previewSlides = document.getElementById("previewSlides")!;
+        const previewDots = document.getElementById("previewDots")!;
+        const previewCarousel = document.querySelector("#gallery-preview .preview-carousel")!;
+        let previewIndex = 0;
+
+        function goToPreviewSlide(n: number) {
+          const total = previewSlides.querySelectorAll(".preview-slide").length;
+          if (total === 0) return;
+          previewIndex = (n + total) % total;
+          (previewSlides as HTMLElement).style.transform = `translateX(-${previewIndex * 100}%)`;
+          previewDots.querySelectorAll(".preview-dot").forEach((d, i) => d.classList.toggle("active", i === previewIndex));
+        }
+
+        function renderPreview(images: { src: string; fit?: string }[]) {
+          // Keep looking at the same slide across a re-render (e.g. tweaking
+          // a fit, adding another image) instead of jumping back to the
+          // first photo — only fall back when that slide no longer exists.
+          const previousIndex = previewIndex;
+          previewSlides.innerHTML = "";
+          previewDots.innerHTML = "";
+
+          if (!images.length) {
+            previewSlides.innerHTML = `<div class="preview-slide"><p class="preview-empty-msg">Sin imágenes en la galería</p></div>`;
+            previewCarousel.querySelectorAll(".preview-arrow, .preview-dots").forEach((el) => ((el as HTMLElement).style.display = "none"));
+            return;
+          }
+
+          images.forEach((img, i) => {
+            const slide = document.createElement("div");
+            slide.className = "preview-slide";
+            slide.innerHTML = `<img src="${img.src}" alt="" style="object-fit: ${img.fit || "contain"};" />`;
+            previewSlides.appendChild(slide);
+
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = "preview-dot" + (i === 0 ? " active" : "");
+            dot.setAttribute("aria-label", `Imagen ${i + 1}`);
+            dot.addEventListener("click", () => goToPreviewSlide(i));
+            previewDots.appendChild(dot);
+          });
+
+          const showNav = images.length > 1;
+          previewCarousel.querySelectorAll(".preview-arrow, .preview-dots").forEach((el) => ((el as HTMLElement).style.display = showNav ? "" : "none"));
+          goToPreviewSlide(Math.min(previousIndex, images.length - 1));
+        }
+
+        document.getElementById("previewPrev")!.addEventListener("click", () => goToPreviewSlide(previewIndex - 1));
+        document.getElementById("previewNext")!.addEventListener("click", () => goToPreviewSlide(previewIndex + 1));
+
         // Gallery (drag-and-drop reorder)
         const initialImages = JSON.parse(
           document.getElementById("gallery-thumbs")?.dataset.initial || "[]"
@@ -223,6 +323,7 @@ const existingThumb: string = project?.image ?? "";
           pathsInputId: "gallery-paths",
           getSlug: () => SLUG,
           initial: initialImages,
+          onChange: renderPreview,
         });
 
         // Submit

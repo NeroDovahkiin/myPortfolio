@@ -1,5 +1,5 @@
 import { get, put, del } from "@vercel/blob";
-import type { Project } from "~/types";
+import type { GalleryImage, Project } from "~/types";
 
 const PROJECTS_PATH = "data/projects.json";
 const token = import.meta.env.BLOB_READ_WRITE_TOKEN;
@@ -9,9 +9,18 @@ function isBlobUrl(url: string | undefined): url is string {
   return !!url && /^https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\//.test(url);
 }
 
+// Datos viejos (previos a soportar fit por imagen) guardaron `images` como
+// string[] en vez de GalleryImage[] — se normalizan al leer para que el
+// resto del código nunca tenga que pensar en las dos formas.
+function normalizeImages(images: unknown): GalleryImage[] {
+  if (!Array.isArray(images)) return [];
+  return images.map((img) => (typeof img === "string" ? { src: img } : img));
+}
+
 function collectImages(p: Pick<Project, "image" | "images"> | undefined): string[] {
   if (!p) return [];
-  return [p.image, ...(p.images ?? [])].filter((x): x is string => !!x);
+  const gallery = normalizeImages(p.images).map((img) => img.src);
+  return [p.image, ...gallery].filter((x): x is string => !!x);
 }
 
 async function deleteBlobImages(urls: string[]): Promise<void> {
@@ -29,7 +38,8 @@ export async function getAllProjects(): Promise<Project[]> {
   const result = await get(PROJECTS_PATH, { access: "public", useCache: false, token });
   if (!result || result.statusCode !== 200) return [];
   const text = await new Response(result.stream).text();
-  return JSON.parse(text) as Project[];
+  const projects = JSON.parse(text) as Project[];
+  return projects.map((p) => ({ ...p, images: normalizeImages(p.images) }));
 }
 
 async function saveAllProjects(projects: Project[]): Promise<void> {

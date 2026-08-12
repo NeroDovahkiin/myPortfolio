@@ -25,7 +25,9 @@ async function main() {
   const referenced = new Set();
   for (const p of projects) {
     if (p.image) referenced.add(p.image);
-    for (const img of p.images ?? []) referenced.add(img);
+    // `images` items are GalleryImage objects ({src, fit}); older data may
+    // still have plain strings.
+    for (const img of p.images ?? []) referenced.add(typeof img === "string" ? img : img.src);
   }
 
   const orphans = [];
