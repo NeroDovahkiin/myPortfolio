@@ -2,7 +2,13 @@
 export const prerender = false;
 import { getAllProjects } from "~/lib/blob-projects";
 
-const projects = await getAllProjects();
+let projects: Awaited<ReturnType<typeof getAllProjects>> = [];
+let loadError: string | null = null;
+try {
+  projects = await getAllProjects();
+} catch (e) {
+  loadError = e instanceof Error ? e.message : String(e);
+}
 
 const sections = {
   proyectos: projects.filter((p) => p.section === "proyectos").sort((a, b) => (a.featured ?? 99) - (b.featured ?? 99)),
@@ -44,6 +50,13 @@ const sectionLabels: Record<string, string> = {
           + Nuevo proyecto
         </a>
       </div>
+
+      {loadError && (
+        <div class="rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 px-4 py-3 text-sm mb-8">
+          No se pudieron cargar los proyectos ({loadError}). Puede ser algo momentáneo de Vercel Blob —
+          <a href="/admin/dashboard" class="underline hover:text-red-200">recargá la página</a> en unos segundos.
+        </div>
+      )}
 
       {Object.entries(sections).map(([key, items]) => items.length > 0 && (
         <section class="mb-10">

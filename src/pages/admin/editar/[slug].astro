@@ -1,11 +1,18 @@
 ---
 export const prerender = false;
 import { getProjectBySlug } from "~/lib/blob-projects";
-import type { GalleryImage } from "~/types";
+import type { GalleryImage, Project } from "~/types";
 
 const { slug } = Astro.params;
 const safeslug = (slug ?? "").replace(/[^a-zA-Z0-9\-_]/g, "");
-const project = await getProjectBySlug(safeslug);
+
+let project: Project | null = null;
+let loadError: string | null = null;
+try {
+  project = await getProjectBySlug(safeslug);
+} catch (e) {
+  loadError = e instanceof Error ? e.message : String(e);
+}
 const notFound = !project;
 
 const existingImages: GalleryImage[] = project?.images ?? [];
@@ -26,7 +33,12 @@ const existingThumb: string = project?.image ?? "";
       <span class="font-bold">Editar: <span class="text-indigo-300">{safeslug}</span></span>
     </nav>
 
-    {notFound ? (
+    {loadError ? (
+      <main class="max-w-2xl mx-auto px-6 py-12 text-center text-gray-400">
+        No se pudo cargar el proyecto ({loadError}). Puede ser algo momentáneo de Vercel Blob —
+        <a href={`/admin/editar/${safeslug}`} class="underline hover:text-gray-200">recargá la página</a> en unos segundos.
+      </main>
+    ) : notFound ? (
       <main class="max-w-2xl mx-auto px-6 py-12 text-center text-gray-400">
         Proyecto no encontrado: <code class="text-red-400">{safeslug}</code>
       </main>

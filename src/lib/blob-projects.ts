@@ -34,8 +34,23 @@ async function deleteBlobImages(urls: string[]): Promise<void> {
   }
 }
 
+// Vercel Blob puede devolver errores transitorios (p.ej. 403 por rate
+// limiting bajo ráfagas de requests) que se resuelven solos al reintentar
+// con un poco de espera — evita que un hiccup momentáneo tumbe la página.
+async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === attempts - 1) throw e;
+      await new Promise((r) => setTimeout(r, 300 * 2 ** i));
+    }
+  }
+  throw new Error("unreachable");
+}
+
 export async function getAllProjects(): Promise<Project[]> {
-  const result = await get(PROJECTS_PATH, { access: "public", useCache: false, token });
+  const result = await withRetry(() => get(PROJECTS_PATH, { access: "public", useCache: false, token }));
   if (!result || result.statusCode !== 200) return [];
   const text = await new Response(result.stream).text();
   const projects = JSON.parse(text) as Project[];
@@ -43,13 +58,15 @@ export async function getAllProjects(): Promise<Project[]> {
 }
 
 async function saveAllProjects(projects: Project[]): Promise<void> {
-  await put(PROJECTS_PATH, JSON.stringify(projects, null, 2), {
-    access: "public",
-    addRandomSuffix: false,
-    allowOverwrite: true,
-    contentType: "application/json",
-    token,
-  });
+  await withRetry(() =>
+    put(PROJECTS_PATH, JSON.stringify(projects, null, 2), {
+      access: "public",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: "application/json",
+      token,
+    })
+  );
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
